@@ -37,6 +37,7 @@ def handling_back_to_main(callback_query) :
 def handling_schedule(callback_query) :
     kb = telebot.types.InlineKeyboardMarkup()
     current_weekday = datetime.datetime.today().weekday()
+    print(datetime.datetime.today().hour)
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
         if current_weekday == i[0] :
             kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)', callback_data=i[1]))
