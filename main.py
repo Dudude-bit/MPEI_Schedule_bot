@@ -78,7 +78,7 @@ def get_new_group(message) :
     btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
     kb.row(btn1)
     kb.row(btn2)
-    bot.send_message(message.chat.id, 'Вы поменяли группу')
+    bot.answer_callback_query(message.chat.id, 'Вы поменяли группу', show_alert=True)
     bot.send_message(message.chat.id, 'Привет, МЭИшник :)', reply_markup=kb)
 
 
