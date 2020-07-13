@@ -37,11 +37,15 @@ def handling_back_to_main(callback_query) :
 def handling_schedule(callback_query) :
     kb = telebot.types.InlineKeyboardMarkup()
     current_weekday = (datetime.datetime.today() + datetime.timedelta(hours=3)).weekday()
+    group_of_user = redis.get(f'user_group_{callback_query.from_user.id}').decode('utf8')
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
+        print(f'{group_of_user}_{i[1]}')
         if current_weekday == i[0] :
-            kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)', callback_data=i[1]))
+            kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)', callback_data=f'{group_of_user}_{i[1]}'))
         else :
             kb.row(telebot.types.InlineKeyboardButton(text=i[1], callback_data=i[1]))
+    btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
+    kb.row(btn)
     bot.edit_message_text('Выбери день недели', message_id=callback_query.message.message_id,
                           chat_id=callback_query.message.chat.id, reply_markup=kb)
 
