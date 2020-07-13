@@ -1,5 +1,6 @@
 import telebot
 import redis
+import datetime
 
 TOKEN = '1190382600:AAFQ1kgr7BqsN-poWciwL8XGQtcTGsbF3kg'
 
@@ -34,7 +35,15 @@ def handling_back_to_main(callback_query) :
 
 @bot.callback_query_handler(func=lambda m : m.data == 'schedule')
 def handling_schedule(callback_query) :
-    print(redis.get(name='user_group_{message.from_user.id}').decode('utf8'))
+    kb = telebot.types.InlineKeyboardMarkup()
+    current_weekday = datetime.datetime.today().weekday()
+    for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
+        if current_weekday == i[0] :
+            kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)', callback_data=i[1]))
+        else :
+            kb.row(telebot.types.InlineKeyboardButton(text=i[1], callback_data=i[1]))
+    bot.edit_message_text('Выбери день недели', message_id=callback_query.message.message_id,
+                          chat_id=callback_query.message.chat.id, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m : m.data == 'settings')
@@ -54,8 +63,9 @@ def change_group(callback_query) :
     redis.set(f'step_{callback_query.from_user.id}', value=SETTINGS_CHANGE_GROUP)
 
 
-@bot.message_handler(content_types=['text'], func=lambda m: int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
-def get_new_group(message):
+@bot.message_handler(content_types=['text'],
+                     func=lambda m : int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
+def get_new_group(message) :
     group = message.text
     redis.set(f'user_group_{message.from_user.id}', value=group)
     redis.set(f'step_{message.from_user.id}', value=START)
