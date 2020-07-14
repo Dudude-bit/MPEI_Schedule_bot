@@ -1,13 +1,13 @@
 import telebot
 import redis
 import datetime
+import db
 
 TOKEN = '1190382600:AAFQ1kgr7BqsN-poWciwL8XGQtcTGsbF3kg'
 
 bot = telebot.TeleBot(token=TOKEN)
 
-redis = redis.Redis(host='ec2-34-252-21-252.eu-west-1.compute.amazonaws.com', username='h',
-                    password='p1aa776530e62212d009d213615cea336a768fc39815bdde3ee383037db2567b3', port=10509)
+redis = redis.Redis()
 
 START, SETTINGS_CHANGE_GROUP = range(2)
 
@@ -35,19 +35,34 @@ def handling_back_to_main(callback_query) :
 
 @bot.callback_query_handler(func=lambda m : m.data == 'schedule')
 def handling_schedule(callback_query) :
+    if not (redis.get(f'user_group_{callback_query.from_user.id}')) :
+        bot.answer_callback_query(callback_query.id, text='Вы не ввели номер группы', show_alert=True)
+        return
     kb = telebot.types.InlineKeyboardMarkup()
     current_weekday = (datetime.datetime.today() + datetime.timedelta(hours=3)).weekday()
     group_of_user = redis.get(f'user_group_{callback_query.from_user.id}').decode('utf8')
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
-        print(f'{group_of_user}_{i[1]}')
         if current_weekday == i[0] :
-            kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)', callback_data=f'{group_of_user}_{i[1]}'))
+            kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)',
+                                                      callback_data=f'schedule_weekday_{group_of_user}_{i[1]}'))
         else :
-            kb.row(telebot.types.InlineKeyboardButton(text=i[1], callback_data=i[1]))
+            kb.row(
+                telebot.types.InlineKeyboardButton(text=i[1], callback_data=f'schedule_weekday_{group_of_user}_{i[1]}'))
     btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
     kb.row(btn)
     bot.edit_message_text('Выбери день недели', message_id=callback_query.message.message_id,
                           chat_id=callback_query.message.chat.id, reply_markup=kb)
+
+
+@bot.callback_query_handler(func=lambda m : m.data.startswith('schedule_weekday'))
+def get_schedule(callback_query) :
+    _, _, group_of_user, weekday = callback_query.data.split('_')
+    connection = db.create_connection()
+    try :
+        schedule = db.get_or_create_schedule(connection, group_of_user, weekday)
+    except IndexError :
+        bot.answer_callback_query(callback_query.id,
+                                  'Расписание для группы, которую Вы ввели не существует, если же Вы считаете, что ввели все правильно, то напишите, пожалуйста, разработчику.')
 
 
 @bot.callback_query_handler(func=lambda m : m.data == 'settings')
@@ -78,7 +93,7 @@ def get_new_group(message) :
     btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
     kb.row(btn1)
     kb.row(btn2)
-    bot.answer_callback_query(message.chat.id, 'Вы поменяли группу', show_alert=True)
+    bot.send_message(message.chat.id, 'Вы поменяли группу')
     bot.send_message(message.chat.id, 'Привет, МЭИшник :)', reply_markup=kb)
 
 
