@@ -35,8 +35,6 @@ def parsing_schedule(connection, groupoid, weekday) :
                 break
 
 
-parsing_schedule(db.create_connection(), '8806', 'Четверг')
-
 
 def get_groupoid(connection, group_of_user) :
     cursor = connection.cursor()
