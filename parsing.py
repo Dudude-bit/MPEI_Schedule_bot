@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-import db
 
 
 def parsing_schedule(connection, groupoid, weekday) :
