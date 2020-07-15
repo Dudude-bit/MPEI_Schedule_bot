@@ -6,8 +6,8 @@ import re
 def parsing_schedule(connection, groupoid, weekday) :
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
     html = requests.get(url, params={
-        'groupoid': groupoid,
-        'start': '2020.05.25'
+        'groupoid' : groupoid,
+        'start' : '2020.02.25'
     }).text
     r = BeautifulSoup(html, 'lxml')
     tr = r.find_all(class_='mpei-galaktika-lessons-grid-tbl').find('tbody')
@@ -30,4 +30,3 @@ def get_groupoid(connection, group_of_user) :
     """
     cursor.execute(query)
     return groupoid
-
