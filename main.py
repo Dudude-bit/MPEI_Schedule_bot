@@ -7,13 +7,15 @@ TOKEN = '1190382600:AAFQ1kgr7BqsN-poWciwL8XGQtcTGsbF3kg'
 
 bot = telebot.TeleBot(token=TOKEN)
 
-redis = redis.Redis()
+redis = redis.Redis(host='ec2-34-252-21-252.eu-west-1.compute.amazonaws.com', port=10509, username='h',
+                    password='p1aa776530e62212d009d213615cea336a768fc39815bdde3ee383037db2567b3')
 
 START, SETTINGS_CHANGE_GROUP = range(2)
 
 
 @bot.message_handler(commands=['start'])
 def handling_start(message) :
+    redis.set(f'step_{message.from_user.id}', START)
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
     btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
@@ -83,7 +85,7 @@ def change_group(callback_query) :
 
 
 @bot.message_handler(content_types=['text'],
-                     func=lambda m : int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
+                    func=lambda m : int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
 def get_new_group(message) :
     group = message.text
     redis.set(f'user_group_{message.from_user.id}', value=group)

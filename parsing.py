@@ -1,17 +1,42 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import db
 
 
 def parsing_schedule(connection, groupoid, weekday) :
+    week_dict = {
+        'Пн' : 'Понедельник',
+        'Вт' : 'Вторник',
+        'Ср' : 'Среда',
+        'Чт' : 'Четверг',
+        'Пт' : 'Пятница'
+    }
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
     html = requests.get(url, params={
         'groupoid' : groupoid,
-        'start' : '2020.02.25'
+        'start' : '2020.05.18'
     }).text
     r = BeautifulSoup(html, 'lxml')
-    tr = r.find_all(class_='mpei-galaktika-lessons-grid-tbl').find('tbody')
+    regexp = re.compile(r'(^\D{2}), \d{1,2}')
+    all_weekdays = r.find('table').find_all('tr', text=regexp)
+    ls_for_schedule = {}
+    for i in all_weekdays :
+        ls_for_schedule[week_dict[regexp.findall(i.text)[0]]] = []
+        tr = i.find_next_sibling()
+        while True :
+            try :
+                ls_for_schedule[week_dict[regexp.findall(i.text)[0]]].append(
+                    tr.find(class_='mpei-galaktika-lessons-grid-name').text)
+                tr = tr.find_next_sibling()
+                if regexp.match(tr.text) :
+                    break
+            except AttributeError as e:
+                print(e)
+                break
 
+
+parsing_schedule(db.create_connection(), '8806', 'Четверг')
 
 
 def get_groupoid(connection, group_of_user) :
