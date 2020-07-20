@@ -3,7 +3,7 @@ import requests
 import re
 
 
-def parsing_schedule(connection, groupoid, weekday) :
+def parsing_schedule(connection, groupoid, file) :
     week_dict = {
         'Пн' : 'Понедельник',
         'Вт' : 'Вторник',
@@ -12,10 +12,8 @@ def parsing_schedule(connection, groupoid, weekday) :
         'Пт' : 'Пятница'
     }
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
-    html = requests.get(url, params={
-        'groupoid' : groupoid,
-        'start' : '2020.05.18'
-    }).text
+    with open(file, 'r', encoding='utf8') as f:
+        html = f.read()
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
@@ -33,7 +31,7 @@ def parsing_schedule(connection, groupoid, weekday) :
             except AttributeError as e:
                 print(e)
                 break
-
+    print(ls_for_schedule)
 
 
 def get_groupoid(connection, group_of_user) :
