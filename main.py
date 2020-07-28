@@ -4,7 +4,6 @@ import datetime
 import db
 
 TOKEN = '1190382600:AAFQ1kgr7BqsN-poWciwL8XGQtcTGsbF3kg'
-
 bot = telebot.TeleBot(token=TOKEN)
 
 redis = redis.Redis()
