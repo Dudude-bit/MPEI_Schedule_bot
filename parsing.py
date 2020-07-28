@@ -14,7 +14,7 @@ def parsing_schedule(connection=None, groupoid=None, weekday=None) :
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
     html = requests.get(url, params={
         'groupoid' : groupoid,
-        'start' : ''
+        'start' : '2020.08.31'
     }).text
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
