@@ -33,6 +33,7 @@ def parsing_schedule(connection, groupoid, weekday) :
             except AttributeError as e:
                 print(e)
                 break
+    print(ls_for_schedule)
 
 
 

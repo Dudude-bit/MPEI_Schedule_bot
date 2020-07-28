@@ -4,7 +4,6 @@ import os
 
 def create_connection():
     connection = None
-    print(os.getenv('passwd'))
     try :
         connection = mysql.connector.connect(
             host='127.0.0.1',
@@ -32,4 +31,3 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
         return parsing.parsing_schedule(connection, groupoid, weekday)
 
 
-#get_or_create_schedule(create_connection(), 'ТФ-14-19', 'Понедельник')
