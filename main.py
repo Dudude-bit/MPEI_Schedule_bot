@@ -85,7 +85,7 @@ def change_group(callback_query) :
 @bot.message_handler(content_types=['text'],
                     func=lambda m : int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
 def get_new_group(message) :
-    group = message.text
+    group = message.text.upper()
     redis.set(f'user_group_{message.from_user.id}', value=group)
     redis.set(f'step_{message.from_user.id}', value=START)
     kb = telebot.types.InlineKeyboardMarkup()

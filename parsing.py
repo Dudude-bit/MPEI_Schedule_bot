@@ -3,7 +3,7 @@ import requests
 import re
 
 
-def parsing_schedule(connection, groupoid, weekday) :
+def parsing_schedule(connection=None, groupoid=None, weekday=None) :
     week_dict = {
         'Пн' : 'Понедельник',
         'Вт' : 'Вторник',
@@ -14,7 +14,7 @@ def parsing_schedule(connection, groupoid, weekday) :
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
     html = requests.get(url, params={
         'groupoid' : groupoid,
-        'start' : '2020.05.18'
+        'start' : ''
     }).text
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
