@@ -3,6 +3,7 @@ import parsing
 import os
 
 def create_connection():
+    print(os.getenv('passwd'))
     connection = None
     try :
         connection = mysql.connector.connect(
