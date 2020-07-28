@@ -9,7 +9,7 @@ def create_connection():
             host='localhost',
             user='root',
             passwd=os.getenv('passwd'),
-            database='heroku_61c7527e4590fca'
+            database='mpei_bot'
         )
         connection.autocommit = True
     except mysql.connector.Error as e :
