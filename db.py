@@ -3,11 +3,10 @@ import parsing
 import os
 
 def create_connection():
-    print(os.getenv('passwd'))
     connection = None
     try :
         connection = mysql.connector.connect(
-            host='localhost:3306',
+            host='127.0.0.1:3306',
             user='root',
             passwd=os.getenv('passwd'),
             database='mpei_bot'
