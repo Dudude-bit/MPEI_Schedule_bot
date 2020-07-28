@@ -4,6 +4,7 @@ import os
 
 def create_connection():
     connection = None
+    print(os.getenv('passwd'))
     try :
         connection = mysql.connector.connect(
             host='127.0.0.1',
