@@ -7,8 +7,7 @@ TOKEN = '1190382600:AAFQ1kgr7BqsN-poWciwL8XGQtcTGsbF3kg'
 
 bot = telebot.TeleBot(token=TOKEN)
 
-redis = redis.Redis(host='ec2-34-252-21-252.eu-west-1.compute.amazonaws.com', port=10509, username='h',
-                    password='p1aa776530e62212d009d213615cea336a768fc39815bdde3ee383037db2567b3')
+redis = redis.Redis()
 
 START, SETTINGS_CHANGE_GROUP = range(2)
 

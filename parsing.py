@@ -29,7 +29,6 @@ def parsing_schedule(connection, groupoid, file) :
                 if regexp.match(tr.text) :
                     break
             except AttributeError as e:
-                print(e)
                 break
     print(ls_for_schedule)
 
@@ -50,3 +49,5 @@ def get_groupoid(connection, group_of_user) :
     """
     cursor.execute(query)
     return groupoid
+
+parsing_schedule(123, 123, r'C:\Users\kiril\Desktop\q.html')
