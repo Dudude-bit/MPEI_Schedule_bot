@@ -4,7 +4,6 @@ import datetime
 import db
 
 TOKEN = '1190382600:AAFQ1kgr7BqsN-poWciwL8XGQtcTGsbF3kg'
-raise KeyError
 bot = telebot.TeleBot(token=TOKEN)
 
 redis = redis.Redis(host='ec2-34-252-21-252.eu-west-1.compute.amazonaws.com', port=10509, username='h',
