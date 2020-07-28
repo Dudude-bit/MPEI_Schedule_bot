@@ -6,7 +6,7 @@ def create_connection():
     connection = None
     try :
         connection = mysql.connector.connect(
-            host='localhost',
+            host='localhost:3306',
             user='root',
             passwd=os.getenv('passwd'),
             database='mpei_bot'
