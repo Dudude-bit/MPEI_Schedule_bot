@@ -49,6 +49,9 @@ def parsing_schedule(connection, groupoid, weekday) :
             INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type) VALUES {weekday, subject[0], groupoid, subject[2], subject[3], subject[1], subject[4]};
             """
             cursor.execute(query)
+    print(weekday)
+    print(ls_for_schedule)
+    print(ls_for_schedule[weekday])
     schedule = list(map(lambda x: (x[0], x[2], x[1]) , ls_for_schedule[weekday]))
     return schedule
 
