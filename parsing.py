@@ -11,8 +11,14 @@ def parsing_schedule(connection, groupoid, file) :
         'Чт' : 'Четверг',
         'Пт' : 'Пятница'
     }
+    time_subj_num = {
+        '09:20 - 10:55' : 1,
+        '11:10 - 12:45' : 2,
+        '13:45 - 15:20' : 3,
+        '15:35 - 17:10' : 4
+    }
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
-    with open(file, 'r', encoding='utf8') as f:
+    with open(file, 'r', encoding='utf8') as f :
         html = f.read()
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
@@ -23,12 +29,16 @@ def parsing_schedule(connection, groupoid, file) :
         tr = i.find_next_sibling()
         while True :
             try :
+                subject_name = tr.find(class_='mpei-galaktika-lessons-grid-name').text
+                teacher_name = tr.find(class_='mpei-galaktika-lessons-grid-pers').text
+                auditory = tr.find(class_='mpei-galaktika-lessons-grid-room').text
+                time = tr.find(class_='mpei-galaktika-lessons-grid-time').text
                 ls_for_schedule[week_dict[regexp.findall(i.text)[0]]].append(
-                    tr.find(class_='mpei-galaktika-lessons-grid-name').text)
+                    (time_subj_num[time], subject_name, auditory, teacher_name))
                 tr = tr.find_next_sibling()
                 if regexp.match(tr.text) :
                     break
-            except AttributeError as e:
+            except AttributeError as e :
                 break
     print(ls_for_schedule)
 
@@ -49,5 +59,6 @@ def get_groupoid(connection, group_of_user) :
     """
     cursor.execute(query)
     return groupoid
+
 
 parsing_schedule(123, 123, r'C:\Users\kiril\Desktop\q.html')
