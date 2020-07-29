@@ -62,6 +62,7 @@ def get_schedule(callback_query) :
     connection = db.create_connection()
     try :
         schedule = db.get_or_create_schedule(connection, group_of_user, weekday)
+        bot.send_message(callback_query.message.chat.id, schedule)
     except IndexError :
         bot.answer_callback_query(callback_query.id,
                                   'Расписание для группы, которую Вы ввели не существует, если же Вы считаете, что ввели все правильно, то напишите, пожалуйста, разработчику.', show_alert=True)
