@@ -20,9 +20,9 @@ def create_connection():
 
 
 def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnection , group_of_user, weekday):
-    print(weekday)
     cursor = connection.cursor()
     groupoid = parsing.get_groupoid(connection, group_of_user)
+    print(groupoid)
     query = f"""
     SELECT num_object, auditory, object FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}'
     """
