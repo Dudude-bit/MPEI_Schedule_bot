@@ -29,10 +29,10 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
     schedule = cursor.fetchall()
     if schedule:
         print('уже есть расписисание')
-        return schedule
+        return str(schedule)
     else:
         print('расписание нету')
         schedule = parsing.parsing_schedule(connection, groupoid, weekday)
-        return schedule
+        return str(schedule)
 
 

@@ -41,7 +41,7 @@ def handling_schedule(callback_query) :
         bot.answer_callback_query(callback_query.id, text='Вы не ввели номер группы', show_alert=True)
         return
     kb = telebot.types.InlineKeyboardMarkup()
-    current_weekday = (datetime.datetime.today() + datetime.timedelta(hours=3)).weekday()
+    current_weekday = (datetime.datetime.today()).weekday()
     group_of_user = redis.get(f'user_group_{callback_query.from_user.id}').decode('utf8')
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
         if current_weekday == i[0] :
