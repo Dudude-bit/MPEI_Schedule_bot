@@ -1,6 +1,8 @@
 import mysql.connector
+import os
 import parsing
 import os
+
 
 def create_connection():
     connection = None

@@ -15,6 +15,7 @@ START, SETTINGS_CHANGE_GROUP = range(2)
 @bot.message_handler(commands=['start'])
 def handling_start(message) :
     redis.set(f'step_{message.from_user.id}', START)
+    redis.sadd('unique_users', message.chat.id)
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
     btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')

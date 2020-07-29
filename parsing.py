@@ -3,7 +3,9 @@ import requests
 import re
 
 
-def parsing_schedule(connection=None, groupoid=None, weekday=None) :
+
+def parsing_schedule(connection, groupoid, weekday) :
+    cursor = connection.cursor()
     week_dict = {
         'Пн' : 'Понедельник',
         'Вт' : 'Вторник',
@@ -11,11 +13,15 @@ def parsing_schedule(connection=None, groupoid=None, weekday=None) :
         'Чт' : 'Четверг',
         'Пт' : 'Пятница'
     }
+    time_subj_num = {
+        '09:20 - 10:55' : 1,
+        '11:10 - 12:45' : 2,
+        '13:45 - 15:20' : 3,
+        '15:35 - 17:10' : 4
+    }
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
-    html = requests.get(url, params={
-        'groupoid' : groupoid,
-        'start' : '2020.08.31'
-    }).text
+    with open('q.html', 'r', encoding='utf8') as f :
+        html = f.read()
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
@@ -25,15 +31,24 @@ def parsing_schedule(connection=None, groupoid=None, weekday=None) :
         tr = i.find_next_sibling()
         while True :
             try :
+                subject_name = tr.find(class_='mpei-galaktika-lessons-grid-name').text
+                teacher_name = tr.find(class_='mpei-galaktika-lessons-grid-pers').text
+                auditory = tr.find(class_='mpei-galaktika-lessons-grid-room').text
+                time = tr.find(class_='mpei-galaktika-lessons-grid-time').text
+                object_type = tr.find(class_='mpei-galaktika-lessons-grid-type').text
                 ls_for_schedule[week_dict[regexp.findall(i.text)[0]]].append(
-                    tr.find(class_='mpei-galaktika-lessons-grid-name').text)
+                    (time_subj_num[time], subject_name, auditory, teacher_name, object_type))
                 tr = tr.find_next_sibling()
                 if regexp.match(tr.text) :
                     break
-            except AttributeError as e:
-                print(e)
+            except AttributeError as e :
                 break
-    print(ls_for_schedule)
+    for weekday in ls_for_schedule :
+        for subject in ls_for_schedule[weekday] :
+            query = f"""
+            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type) VALUES {weekday, subject[0], groupoid, subject[2], subject[3], subject[1], subject[4]};
+            """
+            cursor.execute(query)
 
 
 
@@ -53,5 +68,3 @@ def get_groupoid(connection, group_of_user) :
     """
     cursor.execute(query)
     return groupoid
-
-parsing_schedule(groupoid='9892')
