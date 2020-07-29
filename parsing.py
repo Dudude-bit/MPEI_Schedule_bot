@@ -16,7 +16,6 @@ def parsing_schedule(connection=None, groupoid=None, weekday=None) :
         'groupoid' : groupoid,
         'start' : '2020.08.31'
     }).text
-    print(html)
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
@@ -54,3 +53,5 @@ def get_groupoid(connection, group_of_user) :
     """
     cursor.execute(query)
     return groupoid
+
+parsing_schedule(groupoid='9892')

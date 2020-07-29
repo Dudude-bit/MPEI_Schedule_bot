@@ -2,8 +2,9 @@ import telebot
 import redis
 import datetime
 import db
+import os
 
-TOKEN = '1190382600:AAFQ1kgr7BqsN-poWciwL8XGQtcTGsbF3kg'
+TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
 
 redis = redis.Redis()
