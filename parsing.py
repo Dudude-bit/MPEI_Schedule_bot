@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-
+import exceptions
 
 
 def parsing_schedule(connection, groupoid, weekday) :
@@ -25,7 +25,13 @@ def parsing_schedule(connection, groupoid, weekday) :
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
-    ls_for_schedule = {}
+    ls_for_schedule = {'Понедельник': [(1, 'Отдых', 'Дом', '', '')],
+                       'Вторник': [(1, 'Отдых', 'Дом', '', '')],
+                       'Среда': [(1, 'Отдых', 'Дом', '', '')],
+                       'Четверг': [(1, 'Отдых', 'Дом', '', '')],
+                       'Пятница': [(1, 'Отдых', 'Дом', '', '')],
+                       'Суббота': [(1, 'Отдых', 'Дом', '', '')],
+                       }
     for i in all_weekdays :
         ls_for_schedule[week_dict[regexp.findall(i.text)[0]]] = []
         tr = i.find_next_sibling()
@@ -43,20 +49,14 @@ def parsing_schedule(connection, groupoid, weekday) :
                     break
             except AttributeError as e :
                 break
-    for weekday in ls_for_schedule :
-        for subject in ls_for_schedule[weekday] :
+    for item in ls_for_schedule :
+        for subject in ls_for_schedule[item] :
             query = f"""
-            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type) VALUES {weekday, subject[0], groupoid, subject[2], subject[3], subject[1], subject[4]};
+            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type) VALUES {item, subject[0], groupoid, subject[2], subject[3], subject[1], subject[4]};
             """
             cursor.execute(query)
-    print(weekday)
-    print(ls_for_schedule)
-    print(ls_for_schedule[weekday])
-    schedule = list(map(lambda x: (x[0], x[2], x[1]) , ls_for_schedule[weekday]))
+    schedule = list(map(lambda x : (x[0], x[2], x[1]), ls_for_schedule[weekday]))
     return schedule
-
-
-
 
 def get_groupoid(connection, group_of_user) :
     cursor = connection.cursor()
@@ -68,7 +68,11 @@ def get_groupoid(connection, group_of_user) :
     if groupoid :
         return groupoid[0][0]
     url = requests.get(f'http://mpei.ru/Education/timetable/Pages/default.aspx?group={group_of_user}').url
-    groupoid = re.findall(r'groupoid=(\d+)', url)[0]
+    try :
+        groupoid = re.findall(r'groupoid=(\d+)', url)[0]
+    except IndexError :
+        raise exceptions.MpeiBotException(
+            'Расписание для группы, которую ты ввел не существует, если же ты считаешь, что все правильно, то напиши, пожалуйста, мне в личку, ссылка в описании')
     query = f"""
     INSERT INTO group_name_groupoid(group_name, groupoid) VALUES ('{group_of_user}', '{groupoid}')
     """

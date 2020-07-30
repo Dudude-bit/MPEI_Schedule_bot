@@ -22,17 +22,14 @@ def create_connection():
 def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnection , group_of_user, weekday):
     cursor = connection.cursor()
     groupoid = parsing.get_groupoid(connection, group_of_user)
-    print(groupoid)
     query = f"""
     SELECT num_object, auditory, object FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}'
     """
     cursor.execute(query)
     schedule = cursor.fetchall()
     if schedule:
-        print('уже есть расписисание')
         return schedule
     else:
-        print('расписание нету')
         schedule = parsing.parsing_schedule(connection, groupoid, weekday)
         return schedule
 

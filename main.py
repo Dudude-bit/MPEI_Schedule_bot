@@ -3,6 +3,8 @@ import redis
 import datetime
 import db
 import os
+import exceptions
+
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
@@ -41,7 +43,7 @@ def handling_schedule(callback_query) :
         bot.answer_callback_query(callback_query.id, text='Вы не ввели номер группы', show_alert=True)
         return
     kb = telebot.types.InlineKeyboardMarkup()
-    current_weekday = (datetime.datetime.today()).weekday()
+    current_weekday = datetime.datetime.today().weekday()
     group_of_user = redis.get(f'user_group_{callback_query.from_user.id}').decode('utf8')
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
         if current_weekday == i[0] :
@@ -63,9 +65,8 @@ def get_schedule(callback_query) :
     try :
         schedule = db.get_or_create_schedule(connection, group_of_user, weekday)
         bot.send_message(callback_query.message.chat.id, schedule)
-    except IndexError :
-        bot.answer_callback_query(callback_query.id,
-                                  'Расписание для группы, которую Вы ввели не существует, если же Вы считаете, что ввели все правильно, то напишите, пожалуйста, разработчику.', show_alert=True)
+    except exceptions.MpeiBotException as e:
+        bot.answer_callback_query(callback_query.id, e.message , show_alert=True)
 
 
 @bot.callback_query_handler(func=lambda m : m.data == 'settings')
