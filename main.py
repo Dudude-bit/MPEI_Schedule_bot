@@ -63,7 +63,7 @@ def get_schedule(callback_query) :
     _, _, group_of_user, weekday = callback_query.data.split('_')
     connection = db.create_connection()
     try :
-        schedule = db.get_or_create_schedule(connection, group_of_user, weekday)
+        schedule = str(db.get_or_create_schedule(connection, group_of_user, weekday))
         bot.send_message(callback_query.message.chat.id, schedule)
     except exceptions.MpeiBotException as e:
         bot.answer_callback_query(callback_query.id, e.message , show_alert=True)
