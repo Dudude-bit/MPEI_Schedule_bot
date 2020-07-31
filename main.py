@@ -5,7 +5,6 @@ import db
 import os
 import exceptions
 
-
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
 
@@ -63,10 +62,31 @@ def get_schedule(callback_query) :
     _, _, group_of_user, weekday = callback_query.data.split('_')
     connection = db.create_connection()
     try :
-        schedule = str(db.get_or_create_schedule(connection, group_of_user, weekday))
-        bot.send_message(callback_query.message.chat.id, schedule)
-    except exceptions.MpeiBotException as e:
-        bot.answer_callback_query(callback_query.id, e.message , show_alert=True)
+        schedule = db.get_or_create_schedule(connection, group_of_user, weekday)
+        kb = telebot.types.InlineKeyboardMarkup()
+        for i in schedule :
+            text = f'{i[0]}) {i[2]} {i[1]}'
+            btn = telebot.types.InlineKeyboardButton(text=text, callback_data=f'get_info_{i[3]}')
+            kb.row(btn)
+        bot.edit_message_text('Можешь нажать на предмет, чтобы получить более подробную информацию',
+                              callback_query.message.chat.id, message_id=callback_query.message.message_id, reply_markup=kb)
+    except exceptions.MpeiBotException as e :
+        bot.answer_callback_query(callback_query.id, e.message, show_alert=True)
+
+
+@bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))
+def get_more_information(callback_query):
+    _, _, id_schedule = callback_query.data.split('_')
+    information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
+    text = f"""
+    День недели: {information[1]}
+Номер пары: {information[2]}
+Название предмета: {information[3]}
+Тип пары: {information[7]}
+Преподаватель: {information[6]}
+Кабинет: {information[5]}
+    """
+    bot.answer_callback_query(callback_query.id, text=text, show_alert=True)
 
 
 @bot.callback_query_handler(func=lambda m : m.data == 'settings')
@@ -87,7 +107,7 @@ def change_group(callback_query) :
 
 
 @bot.message_handler(content_types=['text'],
-                    func=lambda m : int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
+                     func=lambda m : int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
 def get_new_group(message) :
     group = message.text.upper()
     redis.set(f'user_group_{message.from_user.id}', value=group)

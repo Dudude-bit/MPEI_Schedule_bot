@@ -25,12 +25,12 @@ def parsing_schedule(connection, groupoid, weekday) :
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
-    ls_for_schedule = {'Понедельник': [(1, 'Отдых', 'Дом', '', '')],
-                       'Вторник': [(1, 'Отдых', 'Дом', '', '')],
-                       'Среда': [(1, 'Отдых', 'Дом', '', '')],
-                       'Четверг': [(1, 'Отдых', 'Дом', '', '')],
-                       'Пятница': [(1, 'Отдых', 'Дом', '', '')],
-                       'Суббота': [(1, 'Отдых', 'Дом', '', '')],
+    ls_for_schedule = {'Понедельник': [(1, 'Отдых', 'Дом', ' ', ' ')],
+                       'Вторник': [(1, 'Отдых', 'Дом', ' ', ' ')],
+                       'Среда': [(1, 'Отдых', 'Дом', ' ', ' ')],
+                       'Четверг': [(1, 'Отдых', 'Дом', ' ', ' ')],
+                       'Пятница': [(1, 'Отдых', 'Дом', ' ', ' ')],
+                       'Суббота': [(1, 'Отдых', 'Дом', ' ', ' ')],
                        }
     for i in all_weekdays :
         ls_for_schedule[week_dict[regexp.findall(i.text)[0]]] = []
@@ -55,7 +55,11 @@ def parsing_schedule(connection, groupoid, weekday) :
             INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type) VALUES {item, subject[0], groupoid, subject[2], subject[3], subject[1], subject[4]};
             """
             cursor.execute(query)
-    schedule = list(map(lambda x : (x[0], x[2], x[1]), ls_for_schedule[weekday]))
+    query = f"""
+        SELECT num_object, auditory, object, id FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}'
+        """
+    cursor.execute(query)
+    schedule = cursor.fetchall()
     return schedule
 
 def get_groupoid(connection, group_of_user) :
