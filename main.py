@@ -4,18 +4,20 @@ import datetime
 import db
 import os
 import exceptions
+import parsing
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
 
 redis = redis.Redis()
 
+
 START, SETTINGS_CHANGE_GROUP = range(2)
 
 
 @bot.message_handler(commands=['start'])
 def handling_start(message) :
-    redis.set(f'step_{message.from_user.id}', START)
+    redis.set(f'step:{message.from_user.id}', START)
     redis.sadd('unique_users', message.chat.id)
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
@@ -38,12 +40,12 @@ def handling_back_to_main(callback_query) :
 
 @bot.callback_query_handler(func=lambda m : m.data == 'schedule')
 def handling_schedule(callback_query) :
-    if not (redis.get(f'user_group_{callback_query.from_user.id}')) :
+    if not (redis.get(f'user_group:{callback_query.from_user.id}')) :
         bot.answer_callback_query(callback_query.id, text='Вы не ввели номер группы', show_alert=True)
         return
     kb = telebot.types.InlineKeyboardMarkup()
     current_weekday = datetime.datetime.today().weekday()
-    group_of_user = redis.get(f'user_group_{callback_query.from_user.id}').decode('utf8')
+    group_of_user = redis.get(f'user_group:{callback_query.from_user.id}').decode('utf8')
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
         if current_weekday == i[0] :
             kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)',
@@ -103,20 +105,27 @@ def handling_settings(callback_query: telebot.types.CallbackQuery) :
 @bot.callback_query_handler(func=lambda m : m.data == 'change_group')
 def change_group(callback_query) :
     bot.send_message(callback_query.message.chat.id, text='Введи номер группы')
-    redis.set(f'step_{callback_query.from_user.id}', value=SETTINGS_CHANGE_GROUP)
+    redis.set(f'step:{callback_query.from_user.id}', value=SETTINGS_CHANGE_GROUP)
 
 
 @bot.message_handler(content_types=['text'],
-                     func=lambda m : int(redis.get(f'step_{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
+                     func=lambda m : int(redis.get(f'step:{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
 def get_new_group(message) :
     group = message.text.upper()
-    redis.set(f'user_group_{message.from_user.id}', value=group)
-    redis.set(f'step_{message.from_user.id}', value=START)
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
     btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
     kb.row(btn1)
     kb.row(btn2)
+    try:
+        groupoid = parsing.get_groupoid_or_raise_exception(group, redis)
+    except exceptions.MpeiBotException as e:
+        bot.send_message(message.chat.id, text=e.message)
+        bot.send_message(message.chat.id, reply_markup=kb, text='Привет, МЭИшник :)')
+        return
+    redis.set(f'user_groupoid:{message.from_user.id}', value=groupoid)
+    redis.set(f'user_group:{message.from_user.id}', value=group)
+    redis.set(f'step:{message.from_user.id}', value=START)
     bot.send_message(message.chat.id, 'Вы поменяли группу')
     bot.send_message(message.chat.id, 'Привет, МЭИшник :)', reply_markup=kb)
 
