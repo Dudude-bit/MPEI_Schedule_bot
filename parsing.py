@@ -2,8 +2,10 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import exceptions
+import redis
 
-def parsing_schedule(connection, groupoid, weekday) :
+
+def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
     cursor = connection.cursor()
     week_dict = {
         'Пн' : 'Понедельник',
@@ -24,20 +26,7 @@ def parsing_schedule(connection, groupoid, weekday) :
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
-    template_dict = {
-        'name': 'Отдых',
-        'teacher': ' ',
-        'room': 'Дом',
-        'num': '1',
-        'type': ' '
-    }
-    ls_for_schedule = {'Понедельник' : [template_dict],
-                       'Вторник' : [template_dict],
-                       'Среда' : [template_dict],
-                       'Четверг' : [template_dict],
-                       'Пятница' : [template_dict],
-                       'Суббота' : [template_dict],
-                       }
+    ls_for_schedule = {}
     for i in all_weekdays :
         ls_for_schedule[week_dict[regexp.findall(i.text)[0]]] = []
         tr = i.find_next_sibling()
@@ -55,6 +44,7 @@ def parsing_schedule(connection, groupoid, weekday) :
                     break
             except AttributeError:
                 break
+    redis_obj.sadd('has_schedule', groupoid)
     for item in ls_for_schedule :
         for subject in ls_for_schedule[item] :
             query = f"""

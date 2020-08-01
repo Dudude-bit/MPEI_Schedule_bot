@@ -1,10 +1,11 @@
 import mysql.connector
-import os
 import parsing
 import os
+import redis
+import exceptions
 
 
-def create_connection():
+def create_connection() :
     connection = None
     try :
         connection = mysql.connector.connect(
@@ -19,7 +20,8 @@ def create_connection():
     return connection
 
 
-def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnection , weekday, redis_obj, callback_query):
+def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnection, weekday, redis_obj: redis.Redis,
+                           callback_query) :
     cursor = connection.cursor()
     groupoid = redis_obj.get(f'user_groupoid:{callback_query.from_user.id}').decode('utf8')
     print(groupoid)
@@ -28,14 +30,17 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
     """
     cursor.execute(query)
     schedule = cursor.fetchall()
-    if schedule:
+    members_tuple = tuple(map(lambda x: x.decode('utf8'), redis_obj.smembers('has_schedule')))
+    if schedule :
         return schedule
-    else:
-        schedule = parsing.parsing_schedule(connection, groupoid, weekday)
+    elif groupoid in members_tuple:
+        raise exceptions.MpeiBotException(message='Хмм... Походу ты отдыхаешь в этот день')
+    else :
+        schedule = parsing.parsing_schedule(connection, groupoid, weekday, redis_obj)
         return schedule
 
 
-def get_information_about_subject(connection, id):
+def get_information_about_subject(connection, id) :
     cursor = connection.cursor()
     query = f"""
     SELECT * FROM schedule WHERE id = {id}
@@ -43,5 +48,3 @@ def get_information_about_subject(connection, id):
     cursor.execute(query)
     information = cursor.fetchall()
     return information
-
-
