@@ -5,7 +5,7 @@ import exceptions
 import redis
 
 
-def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
+def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
     cursor = connection.cursor()
     week_dict = {
         'Пн' : 'Понедельник',
@@ -42,7 +42,7 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
                 tr = tr.find_next_sibling()
                 if regexp.match(tr.text) :
                     break
-            except AttributeError:
+            except AttributeError :
                 break
     redis_obj.sadd('has_schedule', groupoid)
     for item in ls_for_schedule :
@@ -53,11 +53,10 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
             {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type']};
             """
             cursor.execute(query)
-    query = f"""
-        SELECT num_object, auditory, object, id FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}'
-        """
-    cursor.execute(query)
-    schedule = cursor.fetchall()
+    try :
+        schedule = ls_for_schedule[weekday]
+    except KeyError :
+        raise exceptions.MpeiBotException('Хмм... Походу ты отдыхаешь в этот день')
     return schedule
 
 

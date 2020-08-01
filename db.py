@@ -30,10 +30,10 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
     """
     cursor.execute(query)
     schedule = cursor.fetchall()
-    members_tuple = tuple(map(lambda x: x.decode('utf8'), redis_obj.smembers('has_schedule')))
+    members_tuple = tuple(map(lambda x : x.decode('utf8'), redis_obj.smembers('has_schedule')))
     if schedule :
         return schedule
-    elif groupoid in members_tuple:
+    elif groupoid in members_tuple :
         raise exceptions.MpeiBotException(message='Хмм... Походу ты отдыхаешь в этот день')
     else :
         schedule = parsing.parsing_schedule(connection, groupoid, weekday, redis_obj)

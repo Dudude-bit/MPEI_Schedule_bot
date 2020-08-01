@@ -1,4 +1,5 @@
 import redis
+
 redis = redis.Redis()
 temp = f"""
 INSERT INTO group_name_groupoid(group_name, groupoid) VALUES """
@@ -509,8 +510,9 @@ tempst = """648	С-6-18	9593
 1151	С-12А-20	10214
 1152	С-12Б-20	10215""".split()
 import time
+
 t0 = time.time()
-for i in range(2, len(tempst), 3):
-    redis.set(f'group:{tempst[i-1]}', tempst[i])
-    redis.set(f'groupoid:{tempst[i]}', tempst[i-1])
+for i in range(2, len(tempst), 3) :
+    redis.set(f'group:{tempst[i - 1]}', tempst[i])
+    redis.set(f'groupoid:{tempst[i]}', tempst[i - 1])
 print(time.time() - t0)
