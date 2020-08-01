@@ -5,6 +5,7 @@ import db
 import os
 import exceptions
 import parsing
+import random
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
@@ -24,17 +25,34 @@ def handling_start(message) :
     btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
     kb.row(btn1)
     kb.row(btn2)
-    bot.send_message(message.chat.id, text='Привет, МЭИшник :)', reply_markup=kb)
+    user_group = redis.get(f'user_group:{message.from_user.id}')
+    emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
+    emoji = random.choice(emoji_list)
+    if user_group:
+        user_group = user_group.decode('utf8')
+        continue_text = f'студент {user_group} {emoji}'
+    else:
+        continue_text = f'МЭИшник {emoji}'
+    bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m : m.data == 'back_to_main')
 def handling_back_to_main(callback_query) :
+    redis.set(f'step:{callback_query.from_user.id}', START)
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
     btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
     kb.row(btn1)
     kb.row(btn2)
-    bot.edit_message_text(text='Привет, МЭИшник :)', chat_id=callback_query.message.chat.id,
+    user_group = redis.get(f'user_group:{callback_query.from_user.id}')
+    emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
+    emoji = random.choice(emoji_list)
+    if user_group :
+        user_group = user_group.decode('utf8')
+        continue_text = f'студент {user_group} {emoji}'
+    else :
+        continue_text = f'МЭИшник {emoji}'
+    bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
                           message_id=callback_query.message.message_id, reply_markup=kb)
 
 
