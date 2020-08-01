@@ -19,9 +19,10 @@ def create_connection():
     return connection
 
 
-def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnection , group_of_user, weekday):
+def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnection , weekday, redis_obj, callback_query):
     cursor = connection.cursor()
-    groupoid = parsing.get_groupoid(connection, group_of_user)
+    groupoid = redis_obj.get(f'user_groupoid:{callback_query.from_user.id}').decode('utf8')
+    print(groupoid)
     query = f"""
     SELECT num_object, auditory, object, id FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}'
     """
