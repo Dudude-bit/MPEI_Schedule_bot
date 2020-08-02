@@ -3,6 +3,7 @@ import requests
 import re
 import exceptions
 import redis
+import services
 
 
 def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
@@ -38,6 +39,7 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
                 subject_dict['room'] = tr.find(class_='mpei-galaktika-lessons-grid-room').text
                 subject_dict['num'] = time_subj_num[tr.find(class_='mpei-galaktika-lessons-grid-time').text]
                 subject_dict['type'] = tr.find(class_='mpei-galaktika-lessons-grid-type').text
+                subject_dict['slug'] = services.generate_slug(redis_obj)
                 ls_for_schedule[week_dict[regexp.findall(i.text)[0]]].append(subject_dict)
                 tr = tr.find_next_sibling()
                 if regexp.match(tr.text) :
@@ -48,16 +50,16 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
     for item in ls_for_schedule :
         for subject in ls_for_schedule[item] :
             query = f"""
-            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type) 
+            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug) 
             VALUES 
-            {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type']};
+            {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug']};
             """
             cursor.execute(query)
     try :
         schedule = ls_for_schedule[weekday]
     except KeyError :
-        raise exceptions.MpeiBotException('Хмм... Походу ты отдыхаешь в этот день')
-    return schedule
+        raise exceptions.MpeiBotException('Хмм... Походу ты отдыхаешь в этот день 😎')
+    return services.normalize_schedule(schedule)
 
 
 def get_groupoid_or_raise_exception(group, redis_obj) :

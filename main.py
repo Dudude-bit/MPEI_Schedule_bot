@@ -1,3 +1,4 @@
+import time
 import telebot
 import redis
 import datetime
@@ -99,15 +100,14 @@ def get_more_information(callback_query: telebot.types.CallbackQuery) :
     _, _, id_schedule = callback_query.data.split('_')
     information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
     text = f"""
-    День недели: {information[1]}
-Номер пары: {information[2]}
-Название предмета: {information[3]}
-Тип пары: {information[7]}
-Преподаватель: {information[6]}
-Кабинет: {information[5]}
+    День недели:{information[1]}
+Номер пары:{information[2]}
+Название предмета:{information[3]}
+Тип пары:{information[7]}
+Преподаватель:{information[6]}
+Кабинет:{information[5]}
     """
-    bot.edit_message_text(text=text, chat_id=callback_query.message.chat.id,
-                          message_id=callback_query.message.message_id)
+    bot.answer_callback_query(callback_query.id, text, True)
 
 
 @bot.callback_query_handler(func=lambda m : m.data == 'settings')

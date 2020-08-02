@@ -26,26 +26,24 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
     groupoid = redis_obj.get(f'user_groupoid:{callback_query.from_user.id}').decode('utf8')
     print(groupoid)
     query = f"""
-    SELECT num_object, auditory, object, id FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}'
+    SELECT num_object, auditory, object, slug FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}'
     """
     cursor.execute(query)
     schedule = cursor.fetchall()
     members_tuple = tuple(map(lambda x : x.decode('utf8'), redis_obj.smembers('has_schedule')))
     if schedule :
-        print(schedule)
         return schedule
     elif groupoid in members_tuple :
-        raise exceptions.MpeiBotException(message='Хмм... Походу ты отдыхаешь в этот день')
+        raise exceptions.MpeiBotException(message='Хмм... Походу ты отдыхаешь в этот день 😎')
     else :
-        print(schedule)
         schedule = parsing.parsing_schedule(connection, groupoid, weekday, redis_obj)
         return schedule
 
 
-def get_information_about_subject(connection, id) :
+def get_information_about_subject(connection, slug) :
     cursor = connection.cursor()
     query = f"""
-    SELECT * FROM schedule WHERE id = {id}
+    SELECT * FROM schedule WHERE slug = '{slug}'
     """
     cursor.execute(query)
     information = cursor.fetchall()
