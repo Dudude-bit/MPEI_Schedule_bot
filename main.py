@@ -63,14 +63,13 @@ def handling_schedule(callback_query) :
         return
     kb = telebot.types.InlineKeyboardMarkup()
     current_weekday = datetime.datetime.today().weekday()
-    group_of_user = redis.get(f'user_group:{callback_query.from_user.id}').decode('utf8')
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']) :
         if current_weekday == i[0] :
             kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)',
-                                                      callback_data=f'schedule_weekday_{group_of_user}_{i[1]}'))
+                                                      callback_data=f'schedule_weekday:{i[1]}'))
         else :
             kb.row(
-                telebot.types.InlineKeyboardButton(text=i[1], callback_data=f'schedule_weekday_{group_of_user}_{i[1]}'))
+                telebot.types.InlineKeyboardButton(text=i[1], callback_data=f'schedule_weekday:{i[1]}'))
     btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
     kb.row(btn)
     bot.edit_message_text('Выбери день недели', message_id=callback_query.message.message_id,
@@ -79,7 +78,7 @@ def handling_schedule(callback_query) :
 
 @bot.callback_query_handler(func=lambda m : m.data.startswith('schedule_weekday'))
 def get_schedule(callback_query) :
-    _, _, group_of_user, weekday = callback_query.data.split('_')
+    weekday = callback_query.data.split(':')[1]
     connection = db.create_connection()
     try :
         schedule = db.get_or_create_schedule(connection, weekday, redis, callback_query)
@@ -88,11 +87,14 @@ def get_schedule(callback_query) :
             text = f'{i[0]}) {i[2]} {i[1]}'
             btn = telebot.types.InlineKeyboardButton(text=text, callback_data=f'get_info_{i[3]}')
             kb.row(btn)
+        btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='schedule')
+        kb.row(btn)
         bot.edit_message_text('Можешь нажать на предмет, чтобы получить более подробную информацию',
                               callback_query.message.chat.id, message_id=callback_query.message.message_id,
                               reply_markup=kb)
     except exceptions.MpeiBotException as e :
         bot.answer_callback_query(callback_query.id, e.message, show_alert=True)
+    connection.close()
 
 
 @bot.callback_query_handler(func=lambda x : x.data.startswith('get_info'))
@@ -157,5 +159,12 @@ def get_new_group(message) :
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
 
+def main():
+    try:
+        bot.polling()
+    except:
+        main()
 
-bot.polling()
+
+if __name__ == '__main__':
+    main()
