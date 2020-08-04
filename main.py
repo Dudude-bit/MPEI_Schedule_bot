@@ -31,9 +31,10 @@ def handling_start(message) :
     if user_group :
         user_group = user_group.decode('utf8')
         continue_text = f'студент {user_group} {emoji}'
+        bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
     else :
-        continue_text = f'МЭИшник {emoji}'
-    bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
+        redis.set(f'step:{message.from_user.id}', value=SETTINGS_CHANGE_GROUP)
+        bot.send_message(message.chat.id, 'Привет, введи, пожалуйста, номер группы')
 
 
 @bot.callback_query_handler(func=lambda m : m.data == 'back_to_main')
@@ -162,7 +163,8 @@ def get_new_group(message) :
 def main():
     try:
         bot.polling()
-    except:
+    except Exception as e:
+        print(e)
         main()
 
 
