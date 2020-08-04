@@ -163,8 +163,7 @@ def get_new_group(message) :
 def main():
     try:
         bot.polling()
-    except Exception as e:
-        print(e)
+    except:
         main()
 
 
