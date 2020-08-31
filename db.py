@@ -1,13 +1,15 @@
-import mysql.connector
-import parsing
 import os
+
+import mysql.connector
 import redis
+
 import exceptions
+import parsing
 
 
-def create_connection() :
+def create_connection():
     connection = None
-    try :
+    try:
         connection = mysql.connector.connect(
             host='127.0.0.1',
             user='root',
