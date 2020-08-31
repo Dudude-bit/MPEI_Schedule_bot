@@ -11,22 +11,25 @@ import services
 def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
     cursor = connection.cursor()
     week_dict = {
-        'Пн' : 'Понедельник',
-        'Вт' : 'Вторник',
-        'Ср' : 'Среда',
-        'Чт' : 'Четверг',
-        'Пт' : 'Пятница'
+        'Пн': 'Понедельник',
+        'Вт': 'Вторник',
+        'Ср': 'Среда',
+        'Чт': 'Четверг',
+        'Пт': 'Пятница',
+        'Сб': 'Суббота'
     }
     time_subj_num = {
-        '09:20 - 10:55' : 1,
-        '11:10 - 12:45' : 2,
-        '13:45 - 15:20' : 3,
-        '15:35 - 17:10' : 4
+        '09:20 - 10:55': 1,
+        '11:10 - 12:45': 2,
+        '13:45 - 15:20': 3,
+        '15:35 - 17:10': 4,
+        '17:20 - 18:50': 5,
+        '18:55 - 20:25': 6
     }
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
     html = requests.get(url, params={
         'groupoid': groupoid
-    })
+    }).text
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
@@ -45,13 +48,14 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
                 subject_dict['slug'] = services.generate_slug(redis_obj)
                 ls_for_schedule[week_dict[regexp.findall(i.text)[0]]].append(subject_dict)
                 tr = tr.find_next_sibling()
-                if regexp.match(tr.text) :
+                if regexp.match(tr.text):
                     break
             except AttributeError :
                 break
     redis_obj.sadd('has_schedule', groupoid)
     for item in ls_for_schedule :
         for subject in ls_for_schedule[item] :
+            print(subject)
             query = f"""
             INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug) 
             VALUES 

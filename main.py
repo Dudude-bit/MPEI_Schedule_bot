@@ -33,7 +33,6 @@ def handling_start(message):
     if user_group:
         user_group = user_group.decode('utf8')
         continue_text = f'студент {user_group} {emoji}'
-        continue_text = f'МЭИшник {emoji}'
         bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
     else:
         redis.set(f'step:{message.from_user.id}', value=SETTINGS_CHANGE_GROUP)
@@ -89,13 +88,14 @@ def get_schedule(callback_query):
         kb = telebot.types.InlineKeyboardMarkup()
         for i in schedule:
             text = f'{i[0]}) {i[2]} {i[1]}'
-            btn = telebot.types.InlineKeyboardButton(text=text, callback_data=f'get_info_{i[3]}')
+            btn = telebot.types.InlineKeyboardButton(text=text, callback_data=f'get_info:{i[3]}')
             kb.row(btn)
         btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='schedule')
         kb.row(btn)
-        bot.edit_message_text('Можешь нажать на предмет, чтобы получить более подробную информацию',
-                              callback_query.message.chat.id, message_id=callback_query.message.message_id,
-                              reply_markup=kb)
+        bot.edit_message_text(
+            f'Вы выбрали {weekday.capitalize()}. Можешь нажать на предмет, чтобы получить более подробную информацию',
+            callback_query.message.chat.id, message_id=callback_query.message.message_id,
+            reply_markup=kb)
     except exceptions.MpeiBotException as e:
         bot.answer_callback_query(callback_query.id, e.message, show_alert=True)
     connection.close()
@@ -103,7 +103,7 @@ def get_schedule(callback_query):
 
 @bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))
 def get_more_information(callback_query: telebot.types.CallbackQuery):
-    _, _, id_schedule = callback_query.data.split('_')
+    id_schedule = callback_query.data.split(':')[1]
     information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
     text = f"""
     День недели:{information[1]}
@@ -113,7 +113,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Преподаватель:{information[6]}
 Кабинет:{information[5]}
     """
-    bot.answer_callback_query(callback_query.id, text, True)
+    bot.send_message(callback_query.message.chat.id, text)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'settings')
