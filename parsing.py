@@ -1,8 +1,10 @@
-from bs4 import BeautifulSoup
-import requests
 import re
-import exceptions
+
 import redis
+import requests
+from bs4 import BeautifulSoup
+
+import exceptions
 import services
 
 
@@ -22,8 +24,9 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
         '15:35 - 17:10' : 4
     }
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
-    with open('q.html', 'r', encoding='utf8') as f :
-        html = f.read()
+    html = requests.get(url, params={
+        'groupoid': groupoid
+    })
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
