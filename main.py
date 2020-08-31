@@ -169,7 +169,6 @@ def main():
         bot.polling()
     except ApiException as e:
         print(e)
-        main()
 
 
 if __name__ == '__main__':
