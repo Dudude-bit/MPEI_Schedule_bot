@@ -2,6 +2,9 @@ import time
 import telebot
 import redis
 import datetime
+
+from telebot.apihelper import ApiException
+
 import db
 import os
 import exceptions
@@ -160,10 +163,11 @@ def get_new_group(message) :
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
 
+
 def main():
     try:
         bot.polling()
-    except Exception as e:
+    except ApiException as e:
         print(e)
         main()
 
