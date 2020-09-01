@@ -36,7 +36,7 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
     if schedule :
         return schedule
     elif groupoid in members_tuple :
-        raise exceptions.MpeiBotException(message='Хмм... Походу ты отдыхаешь в этот день 😎')
+        raise exceptions.MpeiBotException(message='Хмм... Походу Вы отдыхаете в этот день 😎')
     else :
         schedule = parsing.parsing_schedule(connection, groupoid, weekday, redis_obj)
         return schedule

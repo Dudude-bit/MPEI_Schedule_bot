@@ -1,6 +1,8 @@
 import datetime
+import logging
 import os
 import random
+import time
 
 import redis
 import telebot
@@ -14,6 +16,9 @@ TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
 
 redis = redis.Redis()
+
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                    filename='log.log')
 
 START, SETTINGS_CHANGE_GROUP = range(2)
 
@@ -32,11 +37,12 @@ def handling_start(message):
     emoji = random.choice(emoji_list)
     if user_group:
         user_group = user_group.decode('utf8')
-        continue_text = f'студент {user_group} {emoji}'
+        current_week = redis.get('current_week')
+        continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
         bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
     else:
         redis.set(f'step:{message.from_user.id}', value=SETTINGS_CHANGE_GROUP)
-        bot.send_message(message.chat.id, 'Привет, введи, пожалуйста, номер группы')
+        bot.send_message(message.chat.id, 'Привет, Введите, пожалуйста, номер группы')
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
@@ -75,7 +81,7 @@ def handling_schedule(callback_query):
                 telebot.types.InlineKeyboardButton(text=i[1], callback_data=f'schedule_weekday:{i[1]}'))
     btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
     kb.row(btn)
-    bot.edit_message_text('Выбери день недели', message_id=callback_query.message.message_id,
+    bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
                           chat_id=callback_query.message.chat.id, reply_markup=kb)
 
 
@@ -93,7 +99,7 @@ def get_schedule(callback_query):
         btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='schedule')
         kb.row(btn)
         bot.edit_message_text(
-            f'Вы выбрали {weekday.capitalize()}. Можешь нажать на предмет, чтобы получить более подробную информацию',
+            f'Вы выбрали {weekday.capitalize()}. Можете нажать на предмет, чтобы получить более подробную информацию',
             callback_query.message.chat.id, message_id=callback_query.message.message_id,
             reply_markup=kb)
     except exceptions.MpeiBotException as e:
@@ -104,7 +110,17 @@ def get_schedule(callback_query):
 @bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))
 def get_more_information(callback_query: telebot.types.CallbackQuery):
     id_schedule = callback_query.data.split(':')[1]
-    information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
+    kb = callback_query.message
+    print(kb)
+    bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
+    try:
+        information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
+    except IndexError:
+        bot.answer_callback_query(callback_query.id,
+                                  text='Хмм... Вы пытаетесь получить старое расписание. Нажмите, пожалуйста, назад и выберите заново день недели',
+                                  show_alert=True)
+        return
+
     text = f"""
     День недели:{information[1]}
 Номер пары:{information[2]}
@@ -168,7 +184,9 @@ def main():
     try:
         bot.polling()
     except ApiException as e:
-        print(e)
+        time.sleep(5)
+        logging.fatal(f'{e}')
+        main()
 
 
 if __name__ == '__main__':

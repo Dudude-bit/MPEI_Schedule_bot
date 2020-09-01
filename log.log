@@ -1,0 +1,67 @@
+util.py[LINE:68]# ERROR    [2020-09-02 01:30:35,934]  AttributeError occurred, args=("'CallbackQuery' object has no attribute 'reply_markup'",)
+Traceback (most recent call last):
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/main.py", line 113, in get_more_information
+    kb = callback_query.reply_markup
+AttributeError: 'CallbackQuery' object has no attribute 'reply_markup'
+
+util.py[LINE:68]# ERROR    [2020-09-02 01:32:58,452]  AttributeError occurred, args=("'Message' object has no attribute 'reply_markup'",)
+Traceback (most recent call last):
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/main.py", line 113, in get_more_information
+    kb = callback_query.message.reply_markup
+AttributeError: 'Message' object has no attribute 'reply_markup'
+
+util.py[LINE:68]# ERROR    [2020-09-02 01:33:14,879]  ApiException occurred, args=('A request to the Telegram API was unsuccessful. The server returned HTTP 400 Bad Request. Response body:\n[b\'{"ok":false,"error_code":400,"description":"Bad Request: message to delete not found"}\']',)
+Traceback (most recent call last):
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/main.py", line 115, in get_more_information
+    bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/__init__.py", line 662, in delete_message
+    return apihelper.delete_message(self.token, chat_id, message_id)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/apihelper.py", line 824, in delete_message
+    return _make_request(token, method_url, params=payload, method='post')
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/apihelper.py", line 69, in _make_request
+    return _check_result(method_name, result)['result']
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/apihelper.py", line 88, in _check_result
+    raise ApiException(msg, method_name, result)
+telebot.apihelper.ApiException: A request to the Telegram API was unsuccessful. The server returned HTTP 400 Bad Request. Response body:
+[b'{"ok":false,"error_code":400,"description":"Bad Request: message to delete not found"}']
+
+__init__.py[LINE:455]# ERROR    [2020-09-02 01:33:14,879]  A request to the Telegram API was unsuccessful. The server returned HTTP 400 Bad Request. Response body:
+[b'{"ok":false,"error_code":400,"description":"Bad Request: message to delete not found"}']
+util.py[LINE:68]# ERROR    [2020-09-02 01:37:13,697]  AttributeError occurred, args=("'Message' object has no attribute 'keys'",)
+Traceback (most recent call last):
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/main.py", line 113, in get_more_information
+    kb = callback_query.message.keys()
+AttributeError: 'Message' object has no attribute 'keys'
+
+util.py[LINE:68]# ERROR    [2020-09-02 01:40:15,472]  TypeError occurred, args=("'Message' object is not subscriptable",)
+Traceback (most recent call last):
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/main.py", line 113, in get_more_information
+    kb = callback_query.message['reply_markup']
+TypeError: 'Message' object is not subscriptable
+
+util.py[LINE:68]# ERROR    [2020-09-02 01:46:37,094]  AttributeError occurred, args=("'Message' object has no attribute 'options'",)
+Traceback (most recent call last):
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/main.py", line 113, in get_more_information
+    kb = callback_query.message.options
+AttributeError: 'Message' object has no attribute 'options'
+
+util.py[LINE:68]# ERROR    [2020-09-02 01:49:27,013]  TypeError occurred, args=("de_json() missing 1 required positional argument: 'json_string'",)
+Traceback (most recent call last):
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubuntu_computer/PycharmProjects/MPEI_Schedule_bot/main.py", line 113, in get_more_information
+    kb = callback_query.message.de_json()
+TypeError: de_json() missing 1 required positional argument: 'json_string'
+

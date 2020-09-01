@@ -65,7 +65,7 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
     try :
         schedule = ls_for_schedule[weekday]
     except KeyError :
-        raise exceptions.MpeiBotException('Хмм... Походу ты отдыхаешь в этот день 😎')
+        raise exceptions.MpeiBotException('Хмм... Походу Вы отдыхаете в этот день 😎')
     return services.normalize_schedule(schedule)
 
 
@@ -78,7 +78,7 @@ def get_groupoid_or_raise_exception(group, redis_obj) :
         groupoid = re.findall(r'groupoid=(\d+)', url)[0]
     except IndexError :
         raise exceptions.MpeiBotException(
-            f'Похоже группы, которую ты ввел, не существует  😰')
+            f'Похоже группы, которую Вы ввели, не существует  😰')
     redis_obj.set(f'groupoid:{groupoid}', group)
     redis_obj.set(f'group:{group}', groupoid)
     return groupoid
