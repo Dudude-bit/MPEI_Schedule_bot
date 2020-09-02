@@ -110,8 +110,10 @@ def get_schedule(callback_query):
 @bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))
 def get_more_information(callback_query: telebot.types.CallbackQuery):
     id_schedule = callback_query.data.split(':')[1]
-    kb = callback_query.message
-    print(kb)
+    text = callback_query.message.json['text']
+    template_kb = callback_query.message.json['reply_markup']
+    kb = telebot.types.InlineKeyboardMarkup()
+    kb.keyboard = template_kb
     bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
     try:
         information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
@@ -130,6 +132,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Кабинет:{information[5]}
     """
     bot.send_message(callback_query.message.chat.id, text)
+    bot.send_message(callback_query.message.chat.id, text, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'settings')
