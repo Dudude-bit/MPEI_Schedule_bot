@@ -11,6 +11,7 @@ from telebot.apihelper import ApiException
 import db
 import exceptions
 import parsing
+from services import create_main_keyboard
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
@@ -27,17 +28,13 @@ START, SETTINGS_CHANGE_GROUP = range(2)
 def handling_start(message):
     redis.set(f'step:{message.from_user.id}', START)
     redis.sadd('unique_users', message.chat.id)
-    kb = telebot.types.InlineKeyboardMarkup()
-    btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
-    btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
-    kb.row(btn1)
-    kb.row(btn2)
+    kb = create_main_keyboard()
     user_group = redis.get(f'user_group:{message.from_user.id}')
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
     if user_group:
         user_group = user_group.decode('utf8')
-        current_week = redis.get('current_week')
+        current_week = redis.get('current_week').decode('utf8')
         continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
         bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
     else:
@@ -48,19 +45,16 @@ def handling_start(message):
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
 def handling_back_to_main(callback_query):
     redis.set(f'step:{callback_query.from_user.id}', START)
-    kb = telebot.types.InlineKeyboardMarkup()
-    btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
-    btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
-    kb.row(btn1)
-    kb.row(btn2)
+    kb = create_main_keyboard()
     user_group = redis.get(f'user_group:{callback_query.from_user.id}')
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
+    current_week = redis.get('current_week').decode('utf8')
     if user_group:
         user_group = user_group.decode('utf8')
-        continue_text = f'студент {user_group} {emoji}'
+        continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
     else:
-        continue_text = f'МЭИшник {emoji}'
+        continue_text = f'МЭИшник {emoji}. Сегодня идет {current_week} неделя'
     bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
                           message_id=callback_query.message.message_id, reply_markup=kb)
 
@@ -110,8 +104,10 @@ def get_schedule(callback_query):
 @bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))
 def get_more_information(callback_query: telebot.types.CallbackQuery):
     id_schedule = callback_query.data.split(':')[1]
-    text = callback_query.message.json['text']
-    template_kb = callback_query.message.json['reply_markup']
+    text_reply = callback_query.message.json['text']
+    template_kb = callback_query.message.json['reply_markup']['inline_keyboard']
+    deleting_keyboard = telebot.types.InlineKeyboardMarkup()
+    deleting_keyboard.row(telebot.types.InlineKeyboardButton(text='Удалить сообщение', callback_data='delete_message'))
     kb = telebot.types.InlineKeyboardMarkup()
     kb.keyboard = template_kb
     bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
@@ -131,8 +127,8 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Преподаватель:{information[6]}
 Кабинет:{information[5]}
     """
-    bot.send_message(callback_query.message.chat.id, text)
-    bot.send_message(callback_query.message.chat.id, text, reply_markup=kb)
+    bot.send_message(callback_query.message.chat.id, text, reply_markup=deleting_keyboard)
+    bot.send_message(callback_query.message.chat.id, text_reply, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'settings')
@@ -156,11 +152,7 @@ def change_group(callback_query):
                      func=lambda m: int(redis.get(f'step:{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
 def get_new_group(message):
     group = message.text.upper()
-    kb = telebot.types.InlineKeyboardMarkup()
-    btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='schedule')
-    btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
-    kb.row(btn1)
-    kb.row(btn2)
+    kb = create_main_keyboard()
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
     try:
@@ -181,6 +173,14 @@ def get_new_group(message):
     bot.send_message(message.chat.id, 'Вы поменяли группу')
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
+
+
+@bot.callback_query_handler(func=lambda m: m.data == 'delete_message')
+def deleting_message(callback_query):
+    try:
+        bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
+    except ApiException as e:
+        logging.fatal(e)
 
 
 def main():

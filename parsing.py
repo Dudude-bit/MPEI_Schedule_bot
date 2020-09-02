@@ -26,6 +26,7 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
         '17:20 - 18:50': 5,
         '18:55 - 20:25': 6
     }
+    current_week = redis_obj.get('current_week').decode('utf8')
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'
     html = requests.get(url, params={
         'groupoid': groupoid
@@ -57,14 +58,14 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
         for subject in ls_for_schedule[item] :
             print(subject)
             query = f"""
-            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug) 
+            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
             VALUES 
-            {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug']};
+            {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week};
             """
             cursor.execute(query)
     try :
         schedule = ls_for_schedule[weekday]
-    except KeyError :
+    except KeyError as e:
         raise exceptions.MpeiBotException('Хмм... Походу Вы отдыхаете в этот день 😎')
     return services.normalize_schedule(schedule)
 
