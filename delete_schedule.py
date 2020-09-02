@@ -15,6 +15,7 @@ def delete_schedule():
     """
     cursor.execute(query)
     redis_obj.delete('has_schedule')
+    redis_obj.delete('slug_set')
     html = requests.get('https://mpei.ru/Education/timetable/Pages/default.aspx').text
     soup = BeautifulSoup(html, 'lxml')
     current_week = soup.find('div', class_='nb-week').text

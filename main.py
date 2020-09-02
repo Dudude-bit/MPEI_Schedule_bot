@@ -115,10 +115,18 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
         information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
     except IndexError:
         bot.answer_callback_query(callback_query.id,
-                                  text='Хмм... Вы пытаетесь получить старое расписание. Нажмите, пожалуйста, назад и выберите заново день недели',
+                                  text='Хмм... Вы пытаетесь получить старое расписание. Нажмите, пожалуйста, назад и \
+                                        выберите заново день недели',
                                   show_alert=True)
         return
-
+    time_subj_num = {
+        1: '09:20 - 10:55',
+        2: '11:10 - 12:45',
+        3: '13:45 - 15:20',
+        4: '15:35 - 17:10',
+        5: '17:20 - 18:50',
+        6: '18:55 - 20:25',
+    }
     text = f"""
     День недели:{information[1]}
 Номер пары:{information[2]}
@@ -126,6 +134,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Тип пары:{information[7]}
 Преподаватель:{information[6]}
 Кабинет:{information[5]}
+Время пары: {time_subj_num[information[2]]}
     """
     bot.send_message(callback_query.message.chat.id, text, reply_markup=deleting_keyboard)
     bot.send_message(callback_query.message.chat.id, text_reply, reply_markup=kb)
