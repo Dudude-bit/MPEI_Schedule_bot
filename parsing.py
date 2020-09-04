@@ -95,6 +95,7 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
             except AttributeError :
                 break
     redis_obj.sadd('has_schedule', groupoid)
+    print(ls_for_schedule)
     for item in ls_for_schedule :
         for subject in ls_for_schedule[item] :
             print(subject)
