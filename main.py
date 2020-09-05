@@ -26,15 +26,6 @@ START, SETTINGS_CHANGE_GROUP = range(2)
 
 
 
-def is_change_group(m):
-    tmp = redis.get(f'step:{m.from_user.id}').decode('utf8')
-    if tmp:
-        return int(tmp.decode('utf8')) == SETTINGS_CHANGE_GROUP
-    return False
-
-
-
-
 
 
 @bot.message_handler(commands=['start'])
