@@ -56,7 +56,6 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
     redis_obj.sadd('has_schedule', groupoid)
     for item in ls_for_schedule:
         for subject in ls_for_schedule[item]:
-            print(subject)
             query = f"""
             INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
             VALUES 
@@ -70,7 +69,6 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
     ################  NEXT WEEK  ################
     link_for_next_week = f"https://mpei.ru/Education/timetable/Pages/table.aspx{r.find('span', class_='mpei-galaktika-lessons-grid-nav').find_all('a')[1]['href']}"
     request = requests.get(link_for_next_week)
-    print(request.request.url)
     html = request.text
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
@@ -95,16 +93,15 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
             except AttributeError:
                 break
     redis_obj.sadd('has_schedule', groupoid)
-    print(ls_for_schedule)
     for item in ls_for_schedule:
         for subject in ls_for_schedule[item]:
-            print(subject)
             query = f"""
                 INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
                 VALUES 
                 {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week + 1};
                 """
             cursor.execute(query)
+    print('schedule parsed')
     return services.normalize_schedule(schedule)
 
 
