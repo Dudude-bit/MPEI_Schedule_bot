@@ -8,7 +8,7 @@ import exceptions
 import services
 
 
-def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
+def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
     cursor = connection.cursor()
     week_dict = {
         'Пн': 'Понедельник',
@@ -62,10 +62,6 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
             {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week};
             """
             cursor.execute(query)
-    try:
-        schedule = ls_for_schedule[weekday]
-    except KeyError as e:
-        raise exceptions.MpeiBotException('Хмм... Походу Вы отдыхаете в этот день 😎')
     ################  NEXT WEEK  ################
     link_for_next_week = f"https://mpei.ru/Education/timetable/Pages/table.aspx{r.find('span', class_='mpei-galaktika-lessons-grid-nav').find_all('a')[1]['href']}"
     request = requests.get(link_for_next_week)
@@ -101,8 +97,6 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
                 {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week + 1};
                 """
             cursor.execute(query)
-    print('schedule parsed')
-    return services.normalize_schedule(schedule)
 
 
 def get_groupoid_or_raise_exception(group, redis_obj):

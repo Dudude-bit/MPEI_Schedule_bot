@@ -37,7 +37,12 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
     elif groupoid in members_tuple:
         raise exceptions.MpeiBotException(message='Хмм... Походу Вы отдыхаете в этот день 😎')
     else:
-        schedule = parsing.parsing_schedule(connection, groupoid, weekday, redis_obj)
+        parsing.parsing_schedule(connection, groupoid, redis_obj)
+        query = f"""
+        SELECT num_object, auditory, object, slug FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}' AND week = '{week_num}'
+        """
+        cursor.execute(query)
+        schedule = cursor.fetchall()
         return schedule
 
 
