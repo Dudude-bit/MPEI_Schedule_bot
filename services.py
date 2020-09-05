@@ -1,7 +1,6 @@
 import string
 import random
 import telebot
-from main import redis, SETTINGS_CHANGE_GROUP
 
 
 def generate_slug(redis_obj):
@@ -23,10 +22,3 @@ def create_main_keyboard():
     kb.row(btn1)
     kb.row(btn2)
     return kb
-
-
-def is_change_group(m):
-    tmp = redis.get(f'step:{m.from_user.id}').decode('utf8')
-    if tmp:
-        return int(tmp.decode('utf8')) == SETTINGS_CHANGE_GROUP
-    return False

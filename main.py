@@ -11,7 +11,7 @@ from telebot.apihelper import ApiException
 import db
 import exceptions
 import parsing
-from services import create_main_keyboard, is_change_group
+from services import create_main_keyboard
 
 TOKEN = os.getenv('TOKEN')
 print(TOKEN)
@@ -23,6 +23,18 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(a
                     filename='log.log')
 
 START, SETTINGS_CHANGE_GROUP = range(2)
+
+
+
+def is_change_group(m):
+    tmp = redis.get(f'step:{m.from_user.id}').decode('utf8')
+    if tmp:
+        return int(tmp.decode('utf8')) == SETTINGS_CHANGE_GROUP
+    return False
+
+
+
+
 
 
 @bot.message_handler(commands=['start'])
