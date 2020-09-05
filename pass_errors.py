@@ -16,7 +16,3 @@ def tests(message):
 
 process = multiprocessing.Process(target=bot.polling)
 process.start()
-
-time.sleep(10)
-
-process.kill()
