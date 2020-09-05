@@ -18,18 +18,8 @@
 --
 -- Table structure for table `group_name_groupoid`
 --
-
-DROP TABLE IF EXISTS `group_name_groupoid`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `group_name_groupoid` (
-  `group_name` varchar(45) NOT NULL,
-  `groupoid` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`group_name`),
-  UNIQUE KEY `group_name_UNIQUE` (`group_name`),
-  UNIQUE KEY `groupoid_UNIQUE` (`groupoid`),
-  KEY `group_index` (`group_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
