@@ -39,7 +39,6 @@ def is_change_group(m):
 
 @bot.message_handler(commands=['start'])
 def handling_start(message):
-    redis.set(f'step:{message.from_user.id}', START)
     redis.sadd('unique_users', message.chat.id)
     kb = create_main_keyboard()
     user_group = redis.get(f'user_group:{message.from_user.id}')
@@ -57,7 +56,6 @@ def handling_start(message):
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
 def handling_back_to_main(callback_query):
-    redis.set(f'step:{callback_query.from_user.id}', START)
     kb = create_main_keyboard()
     user_group = redis.get(f'user_group:{callback_query.from_user.id}')
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
@@ -170,11 +168,9 @@ def handling_settings(callback_query: telebot.types.CallbackQuery):
 @bot.callback_query_handler(func=lambda m: m.data == 'change_group')
 def change_group(callback_query):
     bot.send_message(callback_query.message.chat.id, text='Введи номер группы')
-    redis.set(f'step:{callback_query.from_user.id}', value=SETTINGS_CHANGE_GROUP)
+    bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, get_new_group)
 
 
-@bot.message_handler(content_types=['text'],
-                     func=is_change_group)
 def get_new_group(message):
     group = message.text.upper()
     kb = create_main_keyboard()
@@ -194,7 +190,6 @@ def get_new_group(message):
         return
     redis.set(f'user_groupoid:{message.from_user.id}', value=groupoid)
     redis.set(f'user_group:{message.from_user.id}', value=group)
-    redis.set(f'step:{message.from_user.id}', value=START)
     bot.send_message(message.chat.id, 'Вы поменяли группу')
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
