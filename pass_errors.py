@@ -15,5 +15,10 @@ def tests(message):
 
 bot.polling()
 
+<<<<<<< HEAD
 
 
+=======
+process = multiprocessing.Process(target=bot.polling)
+process.start()
+>>>>>>> 5b0f9a7effbb484c382d517bb541dc54c8adfdc3

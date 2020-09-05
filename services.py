@@ -1,18 +1,19 @@
 import string
 import random
 import telebot
+from main import redis, SETTINGS_CHANGE_GROUP
 
 
-def generate_slug(redis_obj) :
+def generate_slug(redis_obj):
     slug = ''.join([random.choice(string.ascii_letters) for _ in range(8)])
-    if slug in list(map(lambda x : x.decode('utf8'), redis_obj.smembers('slug_set'))) :
+    if slug in list(map(lambda x: x.decode('utf8'), redis_obj.smembers('slug_set'))):
         return generate_slug(redis_obj)
     redis_obj.sadd('slug_set', slug)
     return slug
 
 
-def normalize_schedule(schedule_list) :
-    return list(map(lambda x : (x['num'], x['room'], x['name'], x['slug']), schedule_list))
+def normalize_schedule(schedule_list):
+    return list(map(lambda x: (x['num'], x['room'], x['name'], x['slug']), schedule_list))
 
 
 def create_main_keyboard():
@@ -22,3 +23,10 @@ def create_main_keyboard():
     kb.row(btn1)
     kb.row(btn2)
     return kb
+
+
+def is_change_group(m):
+    tmp = redis.get(f'step:{m.from_user.id}').decode('utf8')
+    if tmp:
+        return int(tmp.decode('utf8')) == SETTINGS_CHANGE_GROUP
+    return False
