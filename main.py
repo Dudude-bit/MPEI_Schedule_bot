@@ -11,7 +11,7 @@ from telebot.apihelper import ApiException
 import db
 import exceptions
 import parsing
-from services import create_main_keyboard
+from services import create_main_keyboard, is_change_group
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN)
@@ -161,7 +161,7 @@ def change_group(callback_query):
 
 
 @bot.message_handler(content_types=['text'],
-                     func=lambda m: int(redis.get(f'step:{m.from_user.id}').decode('utf8')) == SETTINGS_CHANGE_GROUP)
+                     func=is_change_group)
 def get_new_group(message):
     group = message.text.upper()
     kb = create_main_keyboard()
