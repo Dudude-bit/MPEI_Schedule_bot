@@ -73,8 +73,11 @@ def handling_schedule(callback_query):
         else:
             kb.row(
                 telebot.types.InlineKeyboardButton(text=i[1], callback_data=f'schedule_weekday:{i[1]}'))
+    btn = telebot.types.InlineKeyboardButton(text=f'Следующая неделя', callback_data='next_week_schedule')
+    kb.row(btn)
     btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
     kb.row(btn)
+
     bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
                           chat_id=callback_query.message.chat.id, reply_markup=kb)
 

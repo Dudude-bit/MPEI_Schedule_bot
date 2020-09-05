@@ -69,9 +69,9 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis):
         raise exceptions.MpeiBotException('Хмм... Походу Вы отдыхаете в этот день 😎')
     ################  NEXT WEEK  ################
     link_for_next_week = f"https://mpei.ru/Education/timetable/Pages/table.aspx{r.find('span', class_='mpei-galaktika-lessons-grid-nav').find_all('a')[1]['href']}"
-    html = requests.get(link_for_next_week, params={
-        'groupoid': groupoid
-    }).text
+    request = requests.get(link_for_next_week)
+    print(request.request.url)
+    html = request.text
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
