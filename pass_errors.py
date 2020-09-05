@@ -5,18 +5,15 @@ import time
 import multiprocessing
 
 TOKEN = os.getenv('TOKEN')
-
+print(TOKEN)
 bot = telebot.TeleBot(token=TOKEN)
 
 
 @bot.message_handler()
 def tests(message):
-    pass
+    raise Exceptions()
+
+bot.polling()
 
 
-process = multiprocessing.Process(target=bot.polling)
-process.start()
 
-time.sleep(10)
-
-process.kill()

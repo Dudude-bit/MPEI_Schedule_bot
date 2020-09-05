@@ -14,6 +14,7 @@ import parsing
 from services import create_main_keyboard
 
 TOKEN = os.getenv('TOKEN')
+print(TOKEN)
 bot = telebot.TeleBot(token=TOKEN)
 
 redis = redis.Redis()
