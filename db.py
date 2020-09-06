@@ -43,7 +43,9 @@ def get_or_create_schedule(connection: mysql.connector.connection.MySQLConnectio
         """
         cursor.execute(query)
         schedule = cursor.fetchall()
-        return schedule
+        if schedule:
+            return schedule
+        raise exceptions.MpeiBotException(message='Хмм... Походу Вы отдыхаете в этот день 😎')
 
 
 def get_information_about_subject(connection, slug):
