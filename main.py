@@ -67,7 +67,8 @@ def handling_schedule(callback_query):
         bot.answer_callback_query(callback_query.id, text='Вы не ввели номер группы', show_alert=True)
         return
     kb = telebot.types.InlineKeyboardMarkup()
-    current_weekday = datetime.datetime.today().weekday()
+    time_obj = datetime.datetime.today() + datetime.timedelta(hours=3) #Из за разницы во времени на сервере прибавляем 3 часа
+    current_weekday = time_obj.weekday()
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']):
         if current_weekday == i[0] and what_week == 'current':
             kb.row(telebot.types.InlineKeyboardButton(text=f'{i[1]} (Сегодня)',
