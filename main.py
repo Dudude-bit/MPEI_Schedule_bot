@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import random
+import time
 
 import redis
 import telebot
@@ -192,7 +193,6 @@ def get_new_group(message: telebot.types.Message):
 
 def main():
     bot.polling()
-
 
 if __name__ == '__main__':
     main()
