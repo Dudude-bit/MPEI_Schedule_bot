@@ -148,7 +148,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
     back_keyboard = telebot.types.InlineKeyboardMarkup()
     back_keyboard.row(telebot.types.InlineKeyboardButton(text='Назад',
                                                          callback_data=f'schedule_weekday:{information[1]}:{what_week}'))
-    bot.send_message(callback_query.message.chat.id, text, reply_markup=back_keyboard)
+    bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id, reply_markup=back_keyboard)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'settings')
