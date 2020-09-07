@@ -184,21 +184,9 @@ def get_new_group(message):
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
 
 
-@bot.callback_query_handler(func=lambda m: m.data == 'delete_message')
-def deleting_message(callback_query):
-    try:
-        bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
-    except ApiException as e:
-        logging.fatal(e)
-
 
 def main():
-    try:
-        bot.polling()
-    except ApiException as e:
-        time.sleep(5)
-        logging.fatal(f'{e}')
-        main()
+    bot.polling()
 
 
 if __name__ == '__main__':
