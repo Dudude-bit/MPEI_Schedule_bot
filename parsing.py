@@ -8,7 +8,7 @@ import exceptions
 import services
 
 
-def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
+def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
     cursor = connection.cursor()
     week_dict = {
         'Пн': 'Понедельник',
@@ -35,12 +35,12 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
     ls_for_schedule = {}
-    for i in all_weekdays :
+    for i in all_weekdays:
         ls_for_schedule[week_dict[regexp.findall(i.text)[0]]] = []
         tr = i.find_next_sibling()
-        while True :
+        while True:
             subject_dict = {}
-            try :
+            try:
                 subject_dict['name'] = tr.find(class_='mpei-galaktika-lessons-grid-name').text
                 subject_dict['teacher'] = tr.find(class_='mpei-galaktika-lessons-grid-pers').text
                 subject_dict['room'] = tr.find(class_='mpei-galaktika-lessons-grid-room').text
@@ -51,37 +51,31 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
                 tr = tr.find_next_sibling()
                 if regexp.match(tr.text):
                     break
-            except AttributeError :
+            except AttributeError:
                 break
     redis_obj.sadd('has_schedule', groupoid)
-    for item in ls_for_schedule :
-        for subject in ls_for_schedule[item] :
-            print(subject)
+    for item in ls_for_schedule:
+        for subject in ls_for_schedule[item]:
             query = f"""
             INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
             VALUES 
             {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week};
             """
             cursor.execute(query)
-    try :
-        schedule = ls_for_schedule[weekday]
-    except KeyError as e:
-        raise exceptions.MpeiBotException('Хмм... Походу Вы отдыхаете в этот день 😎')
     ################  NEXT WEEK  ################
-    link_for_next_week = r.find('span', 'mpei-galaktika-lessons-grid-nav').find_all('a')[1].href
-    html = requests.get(link_for_next_week, params={
-        'groupoid' : groupoid
-    }).text
+    link_for_next_week = f"https://mpei.ru/Education/timetable/Pages/table.aspx{r.find('span', class_='mpei-galaktika-lessons-grid-nav').find_all('a')[1]['href']}"
+    request = requests.get(link_for_next_week)
+    html = request.text
     r = BeautifulSoup(html, 'lxml')
     regexp = re.compile(r'(^\D{2}), \d{1,2}')
     all_weekdays = r.find('table').find_all('tr', text=regexp)
     ls_for_schedule = {}
-    for i in all_weekdays :
+    for i in all_weekdays:
         ls_for_schedule[week_dict[regexp.findall(i.text)[0]]] = []
         tr = i.find_next_sibling()
-        while True :
+        while True:
             subject_dict = {}
-            try :
+            try:
                 subject_dict['name'] = tr.find(class_='mpei-galaktika-lessons-grid-name').text
                 subject_dict['teacher'] = tr.find(class_='mpei-galaktika-lessons-grid-pers').text
                 subject_dict['room'] = tr.find(class_='mpei-galaktika-lessons-grid-room').text
@@ -90,31 +84,29 @@ def parsing_schedule(connection, groupoid, weekday, redis_obj: redis.Redis) :
                 subject_dict['slug'] = services.generate_slug(redis_obj)
                 ls_for_schedule[week_dict[regexp.findall(i.text)[0]]].append(subject_dict)
                 tr = tr.find_next_sibling()
-                if regexp.match(tr.text) :
+                if regexp.match(tr.text):
                     break
-            except AttributeError :
+            except AttributeError:
                 break
     redis_obj.sadd('has_schedule', groupoid)
-    for item in ls_for_schedule :
-        for subject in ls_for_schedule[item] :
-            print(subject)
+    for item in ls_for_schedule:
+        for subject in ls_for_schedule[item]:
             query = f"""
                 INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
                 VALUES 
                 {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week + 1};
                 """
             cursor.execute(query)
-    return services.normalize_schedule(schedule)
 
 
-def get_groupoid_or_raise_exception(group, redis_obj) :
+def get_groupoid_or_raise_exception(group, redis_obj):
     groupoid = redis_obj.get(f'group:{group}')
-    if groupoid :
+    if groupoid:
         return int(groupoid.decode('utf8'))
     url = requests.get(f'http://mpei.ru/Education/timetable/Pages/default.aspx?group={group}').url
-    try :
+    try:
         groupoid = re.findall(r'groupoid=(\d+)', url)[0]
-    except IndexError :
+    except IndexError:
         raise exceptions.MpeiBotException(
             f'Похоже группы, которую Вы ввели, не существует  😰')
     redis_obj.set(f'groupoid:{groupoid}', group)

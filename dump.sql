@@ -18,18 +18,8 @@
 --
 -- Table structure for table `group_name_groupoid`
 --
-
-DROP TABLE IF EXISTS `group_name_groupoid`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `group_name_groupoid` (
-  `group_name` varchar(45) NOT NULL,
-  `groupoid` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`group_name`),
-  UNIQUE KEY `group_name_UNIQUE` (`group_name`),
-  UNIQUE KEY `groupoid_UNIQUE` (`groupoid`),
-  KEY `group_index` (`group_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,14 +35,14 @@ CREATE TABLE `schedule` (
   `num_object` tinyint(3) unsigned NOT NULL,
   `object` varchar(250) NOT NULL,
   `groupoid` int(10) unsigned NOT NULL,
-  `auditory` varchar(20) NOT NULL,
+  `auditory` varchar(250) NOT NULL,
   `teacher` varchar(250) NOT NULL,
   `object_type` varchar(250) NOT NULL,
   `slug` varchar(8) NOT NULL,
+  `week` tinyint NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `group_weekday` (`groupoid`,`WeekDay`),
-  CONSTRAINT `group_name_groupoid` FOREIGN KEY (`groupoid`) REFERENCES `group_name_groupoid` (`groupoid`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `group_weekday` (`groupoid`,`WeekDay`)
 ) ENGINE=InnoDB AUTO_INCREMENT=283 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
