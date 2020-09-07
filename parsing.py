@@ -23,7 +23,8 @@ def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
         '13:45 - 15:20': 3,
         '15:35 - 17:10': 4,
         '17:20 - 18:50': 5,
-        '18:55 - 20:25': 6
+        '18:55 - 20:25': 6,
+        '20:30 - 22:00': 7
     }
     current_week = int(redis_obj.get('current_week').decode('utf8'))
     url = 'https://mpei.ru/Education/timetable/Pages/table.aspx'

@@ -20,7 +20,7 @@ def get_or_create_schedule(connection, weekday, redis_obj: redis.Redis,
     with connection as conn:
         with conn.cursor() as cursor:
             cursor.execute(query)
-    schedule = cursor.fetchall()
+            schedule = cursor.fetchall()
     members_tuple = tuple(map(lambda x: x.decode('utf8'), redis_obj.smembers('has_schedule')))
     if schedule:
         return schedule
