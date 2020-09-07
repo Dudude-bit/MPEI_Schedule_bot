@@ -2,11 +2,9 @@ import datetime
 import logging
 import os
 import random
-import time
 
 import redis
 import telebot
-from telebot.apihelper import ApiException
 
 import db
 import exceptions
@@ -109,7 +107,6 @@ def get_schedule(callback_query):
             reply_markup=kb)
     except exceptions.MpeiBotException as e:
         bot.answer_callback_query(callback_query.id, e.message, show_alert=True)
-    connection.close()
 
 
 @bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))

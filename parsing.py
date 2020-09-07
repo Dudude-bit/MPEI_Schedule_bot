@@ -9,7 +9,6 @@ import services
 
 
 def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
-    cursor = connection.cursor()
     week_dict = {
         'Пн': 'Понедельник',
         'Вт': 'Вторник',
@@ -54,14 +53,16 @@ def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
             except AttributeError:
                 break
     redis_obj.sadd('has_schedule', groupoid)
-    for item in ls_for_schedule:
-        for subject in ls_for_schedule[item]:
-            query = f"""
-            INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
-            VALUES 
-            {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week};
-            """
-            cursor.execute(query)
+    with connection as conn:
+        with conn.cursor() as cursor:
+            for item in ls_for_schedule:
+                for subject in ls_for_schedule[item]:
+                    query = f"""
+                    INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
+                    VALUES 
+                    {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week};
+                    """
+                    cursor.execute(query)
     ################  NEXT WEEK  ################
     link_for_next_week = f"https://mpei.ru/Education/timetable/Pages/table.aspx{r.find('span', class_='mpei-galaktika-lessons-grid-nav').find_all('a')[1]['href']}"
     request = requests.get(link_for_next_week)
@@ -89,14 +90,16 @@ def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
             except AttributeError:
                 break
     redis_obj.sadd('has_schedule', groupoid)
-    for item in ls_for_schedule:
-        for subject in ls_for_schedule[item]:
-            query = f"""
-                INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
-                VALUES 
-                {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week + 1};
-                """
-            cursor.execute(query)
+    with connection as conn:
+        with conn.cursor() as cursor:
+            for item in ls_for_schedule:
+                for subject in ls_for_schedule[item]:
+                    query = f"""
+                        INSERT INTO schedule(WeekDay, num_object, groupoid, auditory, teacher, object, object_type, slug, week) 
+                        VALUES 
+                        {item, subject['num'], groupoid, subject['room'], subject['teacher'], subject['name'], subject['type'], subject['slug'], current_week + 1};
+                        """
+                    cursor.execute(query)
 
 
 def get_groupoid_or_raise_exception(group, redis_obj):
