@@ -3,7 +3,6 @@ import os
 import random
 import redis
 import telebot
-
 import db
 import exceptions
 import parsing
@@ -14,12 +13,11 @@ bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
 
-START, SETTINGS_CHANGE_GROUP = range(2)
-
 
 @bot.message_handler(commands=['start'])
 @decorator
 def handling_start(message):
+    bot.delete_message(message.chat.id, message.message_id)
     bot.clear_step_handler_by_chat_id(message.chat.id)
     redis.sadd('unique_users', message.chat.id)
     kb = create_main_keyboard()
@@ -32,7 +30,6 @@ def handling_start(message):
         continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
         bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
     else:
-        redis.set(f'step:{message.from_user.id}', value=SETTINGS_CHANGE_GROUP)
         bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
         bot.send_message(message.chat.id, 'Привет, Введите, пожалуйста, номер группы')
 
@@ -194,9 +191,5 @@ def get_new_group(message: telebot.types.Message):
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
 
 
-def main():
-    bot.polling(none_stop=True)
-
-
 if __name__ == '__main__':
-    main()
+    bot.polling(none_stop=True)
