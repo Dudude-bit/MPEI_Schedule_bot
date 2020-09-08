@@ -3,6 +3,7 @@ import os
 import random
 import redis
 import telebot
+
 import db
 import exceptions
 import parsing
@@ -49,7 +50,7 @@ def handling_back_to_main(callback_query):
     else:
         continue_text = f'МЭИшник {emoji}. Сегодня идет {current_week} неделя'
     bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
-                          message_id=callback_query.message.message_id, reply_markup=kb)
+                              message_id=callback_query.message.message_id, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data.startswith('weekdays'))
@@ -78,7 +79,7 @@ def handling_schedule(callback_query):
     btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
     kb.row(btn)
     bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
-                          chat_id=callback_query.message.chat.id, reply_markup=kb)
+                              chat_id=callback_query.message.chat.id, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data.startswith('schedule_weekday'))
@@ -140,7 +141,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Время пары: {time_subj_num[information[2]]}
     """
     bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
-                          reply_markup=kb)
+                              reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'settings')
@@ -152,7 +153,7 @@ def handling_settings(callback_query: telebot.types.CallbackQuery):
     kb.row(btn1)
     kb.row(btn2)
     bot.edit_message_text(text='Настройки', reply_markup=kb, chat_id=callback_query.message.chat.id,
-                          message_id=callback_query.message.message_id)
+                              message_id=callback_query.message.message_id)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'change_group')
@@ -189,6 +190,7 @@ def get_new_group(message: telebot.types.Message):
     redis.set(f'user_group:{message.from_user.id}', value=group)
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
+
 
 
 if __name__ == '__main__':
