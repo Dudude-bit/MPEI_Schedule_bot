@@ -1,6 +1,8 @@
 import string
 import random
+
 import telebot
+import datetime
 
 
 def generate_slug(redis_obj):
@@ -22,3 +24,10 @@ def create_main_keyboard():
     kb.row(btn1)
     kb.row(btn2)
     return kb
+
+
+def decorator(func):
+    def wrapper(message):
+        print(datetime.datetime.now())
+        return func(message)
+    return wrapper

@@ -1,0 +1,42 @@
+ERROR:TeleBot:TypeError occurred, args=("'Message' object is not subscriptable",)
+Traceback (most recent call last):
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/services.py", line 32, in wrapper
+    logging.info(f"{message['json']} --- {func.__name__}")
+TypeError: 'Message' object is not subscriptable
+
+ERROR:TeleBot:AttributeError occurred, args=("'CallbackQuery' object has no attribute 'json'",)
+Traceback (most recent call last):
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/services.py", line 32, in wrapper
+    logging.info(f"{message.json} --- {func.__name__}")
+AttributeError: 'CallbackQuery' object has no attribute 'json'
+
+ERROR:TeleBot:AttributeError occurred, args=("'CallbackQuery' object has no attribute 'to_json'",)
+Traceback (most recent call last):
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/services.py", line 32, in wrapper
+    logging.info(f"{message.to_json()} --- {func.__name__}")
+AttributeError: 'CallbackQuery' object has no attribute 'to_json'
+
+ERROR:TeleBot:TypeError occurred, args=("log() missing 1 required positional argument: 'msg'",)
+Traceback (most recent call last):
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/services.py", line 32, in wrapper
+    logging.log(f"{message} --- {func.__name__}")
+TypeError: log() missing 1 required positional argument: 'msg'
+
+ERROR:TeleBot:TypeError occurred, args=("log() missing 1 required positional argument: 'level'",)
+Traceback (most recent call last):
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/venv/lib/python3.8/site-packages/telebot/util.py", line 62, in run
+    task(*args, **kwargs)
+  File "/home/ubunutu/PycharmProjects/MPEI_Schedule_bot/services.py", line 32, in wrapper
+    logging.log(msg=f"{message} --- {func.__name__}")
+TypeError: log() missing 1 required positional argument: 'level'
+
+ERROR:root:{'game_short_name': None, 'chat_instance': '-7456725312334923987', 'id': '1928571581307003439', 'from_user': {'id': 449030562, 'is_bot': False, 'first_name': 'Kirill', 'username': 'Justnikcname', 'last_name': None, 'language_code': 'en', 'can_join_groups': None, 'can_read_all_group_messages': None, 'supports_inline_queries': None}, 'message': {'content_type': 'text', 'message_id': 1481, 'from_user': <telebot.types.User object at 0x7f91cc3cb790>, 'date': 1599594496, 'chat': <telebot.types.Chat object at 0x7f91cc3cb7f0>, 'forward_from': None, 'forward_from_chat': None, 'forward_from_message_id': None, 'forward_signature': None, 'forward_date': None, 'reply_to_message': None, 'edit_date': 1599594554, 'media_group_id': None, 'author_signature': None, 'text': 'Выберите день недели', 'entities': None, 'caption_entities': None, 'audio': None, 'document': None, 'photo': None, 'sticker': None, 'video': None, 'video_note': None, 'voice': None, 'caption': None, 'contact': None, 'location': None, 'venue': None, 'animation': None, 'dice': None, 'new_chat_member': None, 'new_chat_members': None, 'left_chat_member': None, 'new_chat_title': None, 'new_chat_photo': None, 'delete_chat_photo': None, 'group_chat_created': None, 'supergroup_chat_created': None, 'channel_chat_created': None, 'migrate_to_chat_id': None, 'migrate_from_chat_id': None, 'pinned_message': None, 'invoice': None, 'successful_payment': None, 'connected_website': None, 'json': {'message_id': 1481, 'from': {'id': 1190382600, 'is_bot': True, 'first_name': 'MPEI TimeTable', 'username': 'MPEI_Schedule_bot'}, 'chat': {'id': 449030562, 'first_name': 'Kirill', 'username': 'Justnikcname', 'type': 'private'}, 'date': 1599594496, 'edit_date': 1599594554, 'text': 'Выберите день недели', 'reply_markup': {'inline_keyboard': [[{'text': 'Понедельник', 'callback_data': 'schedule_weekday:Понедельник:current'}], [{'text': 'Вторник', 'callback_data': 'schedule_weekday:Вторник:current'}], [{'text': 'Среда (Сегодня)', 'callback_data': 'schedule_weekday:Среда:current'}], [{'text': 'Четверг', 'callback_data': 'schedule_weekday:Четверг:current'}], [{'text': 'Пятница', 'callback_data': 'schedule_weekday:Пятница:current'}], [{'text': 'Суббота', 'callback_data': 'schedule_weekday:Суббота:current'}], [{'text': 'Следующая неделя', 'callback_data': 'weekdays:next'}], [{'text': 'Назад', 'callback_data': 'back_to_main'}]]}}}, 'data': 'back_to_main', 'inline_message_id': None} --- handling_back_to_main
+ERROR:root:{'game_short_name': None, 'chat_instance': '-7456725312334923987', 'id': '1928571580984243073', 'from_user': {'id': 449030562, 'is_bot': False, 'first_name': 'Kirill', 'username': 'Justnikcname', 'last_name': None, 'language_code': 'en', 'can_join_groups': None, 'can_read_all_group_messages': None, 'supports_inline_queries': None}, 'message': {'content_type': 'text', 'message_id': 1481, 'from_user': <telebot.types.User object at 0x7f91cc3cb610>, 'date': 1599594496, 'chat': <telebot.types.Chat object at 0x7f91cc3d7580>, 'forward_from': None, 'forward_from_chat': None, 'forward_from_message_id': None, 'forward_signature': None, 'forward_date': None, 'reply_to_message': None, 'edit_date': 1599594625, 'media_group_id': None, 'author_signature': None, 'text': 'Привет, студент ТФ-15-19 😃. Сегодня идет 2 неделя', 'entities': None, 'caption_entities': None, 'audio': None, 'document': None, 'photo': None, 'sticker': None, 'video': None, 'video_note': None, 'voice': None, 'caption': None, 'contact': None, 'location': None, 'venue': None, 'animation': None, 'dice': None, 'new_chat_member': None, 'new_chat_members': None, 'left_chat_member': None, 'new_chat_title': None, 'new_chat_photo': None, 'delete_chat_photo': None, 'group_chat_created': None, 'supergroup_chat_created': None, 'channel_chat_created': None, 'migrate_to_chat_id': None, 'migrate_from_chat_id': None, 'pinned_message': None, 'invoice': None, 'successful_payment': None, 'connected_website': None, 'json': {'message_id': 1481, 'from': {'id': 1190382600, 'is_bot': True, 'first_name': 'MPEI TimeTable', 'username': 'MPEI_Schedule_bot'}, 'chat': {'id': 449030562, 'first_name': 'Kirill', 'username': 'Justnikcname', 'type': 'private'}, 'date': 1599594496, 'edit_date': 1599594625, 'text': 'Привет, студент ТФ-15-19 😃. Сегодня идет 2 неделя', 'reply_markup': {'inline_keyboard': [[{'text': 'Посмотреть расписание', 'callback_data': 'weekdays:current'}], [{'text': 'Настройки', 'callback_data': 'settings'}]]}}}, 'data': 'weekdays:current', 'inline_message_id': None} --- handling_schedule
