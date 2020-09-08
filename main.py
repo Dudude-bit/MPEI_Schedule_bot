@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 import random
-
+from telebot.apihelper import ApiException
 import redis
 import telebot
 
@@ -113,7 +113,6 @@ def get_schedule(callback_query):
 @bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))
 def get_more_information(callback_query: telebot.types.CallbackQuery):
     id_schedule = callback_query.data.split(':')[1]
-    what_week = callback_query.data.split(':')[2]
     template_kb = callback_query.message.json['reply_markup']['inline_keyboard']
     kb = telebot.types.InlineKeyboardMarkup()
     kb.keyboard = template_kb
@@ -143,11 +142,11 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Кабинет:{information[5]}
 Время пары: {time_subj_num[information[2]]}
     """
-    back_keyboard = telebot.types.InlineKeyboardMarkup()
-    back_keyboard.row(telebot.types.InlineKeyboardButton(text='Назад',
-                                                         callback_data=f'schedule_weekday:{information[1]}:{what_week}'))
-    bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
-                          reply_markup=back_keyboard)
+    try:
+        bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
+                              reply_markup=kb)
+    except ApiException:
+        pass
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'settings')
