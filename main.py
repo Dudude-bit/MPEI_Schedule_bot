@@ -2,13 +2,13 @@ import datetime
 import random
 import redis
 import telebot
-
+import os
 import db
 import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = '1190382600:AAFU3E0xG4fkxlSmpGdZ0f7L4URk8jbeX64'
+TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
