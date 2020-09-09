@@ -1,31 +1,23 @@
 import datetime
-import logging
-import os
 import random
-import time
-
 import redis
 import telebot
-from telebot.apihelper import ApiException
 
 import db
 import exceptions
 import parsing
-from services import create_main_keyboard
+from services import create_main_keyboard, decorator
 
 TOKEN = '1190382600:AAFU3E0xG4fkxlSmpGdZ0f7L4URk8jbeX64'
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
 
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                    filename='log.log')
-
-START, SETTINGS_CHANGE_GROUP = range(2)
-
 
 @bot.message_handler(commands=['start'])
+@decorator
 def handling_start(message):
+    bot.delete_message(message.chat.id, message.message_id)
     bot.clear_step_handler_by_chat_id(message.chat.id)
     redis.sadd('unique_users', message.chat.id)
     kb = create_main_keyboard()
@@ -44,6 +36,7 @@ def handling_start(message):
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
+@decorator
 def handling_back_to_main(callback_query):
     bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
     kb = create_main_keyboard()
@@ -57,17 +50,19 @@ def handling_back_to_main(callback_query):
     else:
         continue_text = f'МЭИшник {emoji}. Сегодня идет {current_week} неделя'
     bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
-                          message_id=callback_query.message.message_id, reply_markup=kb)
+                              message_id=callback_query.message.message_id, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data.startswith('weekdays'))
+@decorator
 def handling_schedule(callback_query):
     what_week = callback_query.data.split(':')[1]
     if not (redis.get(f'user_group:{callback_query.from_user.id}')):
         bot.answer_callback_query(callback_query.id, text='Вы не ввели номер группы', show_alert=True)
         return
     kb = telebot.types.InlineKeyboardMarkup()
-    time_obj = datetime.datetime.today() + datetime.timedelta(hours=3) #Из за разницы во времени на сервере прибавляем 3 часа
+    time_obj = datetime.datetime.today() + datetime.timedelta(
+        hours=3)  # Из за разницы во времени на сервере прибавляем 3 часа
     current_weekday = time_obj.weekday()
     for i in enumerate(['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']):
         if current_weekday == i[0] and what_week == 'current':
@@ -76,18 +71,19 @@ def handling_schedule(callback_query):
         else:
             kb.row(
                 telebot.types.InlineKeyboardButton(text=i[1], callback_data=f'schedule_weekday:{i[1]}:{what_week}'))
-    if what_week == 'current':
-        btn = telebot.types.InlineKeyboardButton(text=f'Следующая неделя', callback_data='weekdays:next')
-    elif what_week == 'next':
-        btn = telebot.types.InlineKeyboardButton(text=f'Текущая неделя', callback_data='weekdays:current')
+    btn = telebot.types.InlineKeyboardButton(text=f'Текущая неделя',
+                                             callback_data='weekdays:current') if what_week == 'next' \
+        else telebot.types.InlineKeyboardButton(
+        text=f'Следующая неделя', callback_data='weekdays:next')
     kb.row(btn)
     btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
     kb.row(btn)
     bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
-                          chat_id=callback_query.message.chat.id, reply_markup=kb)
+                              chat_id=callback_query.message.chat.id, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data.startswith('schedule_weekday'))
+@decorator
 def get_schedule(callback_query):
     weekday = callback_query.data.split(':')[1]
     what_week = callback_query.data.split(':')[2]
@@ -109,14 +105,12 @@ def get_schedule(callback_query):
             reply_markup=kb)
     except exceptions.MpeiBotException as e:
         bot.answer_callback_query(callback_query.id, e.message, show_alert=True)
-    connection.close()
 
 
 @bot.callback_query_handler(func=lambda x: x.data.startswith('get_info'))
+@decorator
 def get_more_information(callback_query: telebot.types.CallbackQuery):
     id_schedule = callback_query.data.split(':')[1]
-    what_week = callback_query.data.split(':')[2]
-    text_reply = callback_query.message.json['text']
     template_kb = callback_query.message.json['reply_markup']['inline_keyboard']
     kb = telebot.types.InlineKeyboardMarkup()
     kb.keyboard = template_kb
@@ -135,6 +129,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
         4: '15:35 - 17:10',
         5: '17:20 - 18:50',
         6: '18:55 - 20:25',
+        7: '20:30 - 22:00'
     }
     text = f"""
     День недели:{information[1]}
@@ -145,13 +140,12 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Кабинет:{information[5]}
 Время пары: {time_subj_num[information[2]]}
     """
-    back_keyboard = telebot.types.InlineKeyboardMarkup()
-    back_keyboard.row(telebot.types.InlineKeyboardButton(text='Назад',
-                                                         callback_data=f'schedule_weekday:{information[1]}:{what_week}'))
-    bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id, reply_markup=back_keyboard)
+    bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
+                              reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'settings')
+@decorator
 def handling_settings(callback_query: telebot.types.CallbackQuery):
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Поменять группу', callback_data='change_group')
@@ -159,17 +153,23 @@ def handling_settings(callback_query: telebot.types.CallbackQuery):
     kb.row(btn1)
     kb.row(btn2)
     bot.edit_message_text(text='Настройки', reply_markup=kb, chat_id=callback_query.message.chat.id,
-                          message_id=callback_query.message.message_id)
+                              message_id=callback_query.message.message_id)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'change_group')
+@decorator
 def change_group(callback_query):
-    bot.answer_callback_query(callback_query.id,text='Введи номер группы', show_alert=True)
+    bot.answer_callback_query(callback_query.id, text='Введи номер группы', show_alert=True)
     bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, get_new_group)
 
 
+@decorator
 def get_new_group(message: telebot.types.Message):
-    group = message.text.upper()
+    group = message.text
+    if group:
+        group = group.upper()
+    else:
+        return
     kb = create_main_keyboard()
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
@@ -191,11 +191,5 @@ def get_new_group(message: telebot.types.Message):
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
 
-
-
-def main():
-    bot.polling(none_stop=True)
-
-
 if __name__ == '__main__':
-    main()
+    bot.polling(none_stop=True)
