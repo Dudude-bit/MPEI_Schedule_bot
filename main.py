@@ -13,7 +13,7 @@ import exceptions
 import parsing
 from services import create_main_keyboard
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = '1190382600:AAFU3E0xG4fkxlSmpGdZ0f7L4URk8jbeX64'
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -38,9 +38,9 @@ def handling_start(message):
         continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
         bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
     else:
-        redis.set(f'step:{message.from_user.id}', value=SETTINGS_CHANGE_GROUP)
         bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
         bot.send_message(message.chat.id, 'Привет, Введите, пожалуйста, номер группы')
+        bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
@@ -194,7 +194,7 @@ def get_new_group(message: telebot.types.Message):
 
 
 def main():
-    bot.polling()
+    bot.polling(none_stop=True)
 
 
 if __name__ == '__main__':
