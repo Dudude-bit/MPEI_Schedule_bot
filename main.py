@@ -1,9 +1,8 @@
 import datetime
-import os
 import random
 import redis
 import telebot
-
+import os
 import db
 import exceptions
 import parsing
@@ -33,6 +32,7 @@ def handling_start(message):
     else:
         bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
         bot.send_message(message.chat.id, 'Привет, Введите, пожалуйста, номер группы')
+        bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
@@ -178,8 +178,6 @@ def get_new_group(message: telebot.types.Message):
     redis.set(f'user_group:{message.from_user.id}', value=group)
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
-
-
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
