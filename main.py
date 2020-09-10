@@ -144,18 +144,6 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
                               reply_markup=kb)
 
 
-@bot.callback_query_handler(func=lambda m: m.data == 'settings')
-@decorator
-def handling_settings(callback_query: telebot.types.CallbackQuery):
-    kb = telebot.types.InlineKeyboardMarkup()
-    btn1 = telebot.types.InlineKeyboardButton(text='Поменять группу', callback_data='change_group')
-    btn2 = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
-    kb.row(btn1)
-    kb.row(btn2)
-    bot.edit_message_text(text='Настройки', reply_markup=kb, chat_id=callback_query.message.chat.id,
-                              message_id=callback_query.message.message_id)
-
-
 @bot.callback_query_handler(func=lambda m: m.data == 'change_group')
 @decorator
 def change_group(callback_query):

@@ -20,7 +20,7 @@ def normalize_schedule(schedule_list):
 def create_main_keyboard():
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='weekdays:current')
-    btn2 = telebot.types.InlineKeyboardButton(text='Настройки', callback_data='settings')
+    btn2 = telebot.types.InlineKeyboardButton(text='Поменять группу', callback_data='change_group')
     kb.row(btn1)
     kb.row(btn2)
     return kb
