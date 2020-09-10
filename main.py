@@ -2,13 +2,15 @@ import datetime
 import random
 import redis
 import telebot
-import os
+
+from telebot.apihelper import ApiException
+
 import db
 import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = '1190382600:AAETgcfBMvBS_lqdwKKrN4IuDN9YSXmtsig'
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -17,7 +19,10 @@ redis = redis.Redis()
 @bot.message_handler(commands=['start'])
 @decorator
 def handling_start(message):
-    bot.delete_message(message.chat.id, message.message_id)
+    try:
+        bot.delete_message(message.chat.id, message.message_id)
+    except ApiException:
+        pass
     bot.clear_step_handler_by_chat_id(message.chat.id)
     redis.sadd('unique_users', message.chat.id)
     kb = create_main_keyboard()
@@ -49,8 +54,11 @@ def handling_back_to_main(callback_query):
         continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
     else:
         continue_text = f'МЭИшник {emoji}. Сегодня идет {current_week} неделя'
-    bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
-                              message_id=callback_query.message.message_id, reply_markup=kb)
+    try:
+        bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
+                          message_id=callback_query.message.message_id, reply_markup=kb)
+    except ApiException:
+        pass
 
 
 @bot.callback_query_handler(func=lambda m: m.data.startswith('weekdays'))
@@ -78,8 +86,11 @@ def handling_schedule(callback_query):
     kb.row(btn)
     btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
     kb.row(btn)
-    bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
-                              chat_id=callback_query.message.chat.id, reply_markup=kb)
+    try:
+        bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
+                          chat_id=callback_query.message.chat.id, reply_markup=kb)
+    except ApiException:
+        pass
 
 
 @bot.callback_query_handler(func=lambda m: m.data.startswith('schedule_weekday'))
@@ -99,10 +110,13 @@ def get_schedule(callback_query):
             kb.row(btn)
         btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data=f'weekdays:{what_week}')
         kb.row(btn)
-        bot.edit_message_text(
-            f'Вы выбрали {weekday.capitalize()}. Можете нажать на предмет, чтобы получить более подробную информацию',
-            callback_query.message.chat.id, message_id=callback_query.message.message_id,
-            reply_markup=kb)
+        try:
+            bot.edit_message_text(
+                f'Вы выбрали {weekday.capitalize()}. Можете нажать на предмет, чтобы получить более подробную информацию',
+                callback_query.message.chat.id, message_id=callback_query.message.message_id,
+                reply_markup=kb)
+        except ApiException:
+            pass
     except exceptions.MpeiBotException as e:
         bot.answer_callback_query(callback_query.id, e.message, show_alert=True)
 
@@ -140,8 +154,12 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
 Кабинет:{information[5]}
 Время пары: {time_subj_num[information[2]]}
     """
-    bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
+    try:
+        bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
                               reply_markup=kb)
+    except ApiException:
+        pass
+
 
 @bot.callback_query_handler(func=lambda m: m.data == 'change_group')
 @decorator
@@ -160,7 +178,10 @@ def get_new_group(message: telebot.types.Message):
     kb = create_main_keyboard()
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
-    bot.delete_message(message.chat.id, message.message_id)
+    try:
+        bot.delete_message(message.chat.id, message.message_id)
+    except ApiException:
+        pass
     try:
         groupoid = parsing.get_groupoid_or_raise_exception(group, redis)
     except exceptions.MpeiBotException as e:
@@ -178,5 +199,6 @@ def get_new_group(message: telebot.types.Message):
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
 
+
 if __name__ == '__main__':
-    bot.polling(none_stop=True)
+    bot.polling()
