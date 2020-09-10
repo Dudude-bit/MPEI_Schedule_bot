@@ -143,7 +143,6 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
     bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
                               reply_markup=kb)
 
-
 @bot.callback_query_handler(func=lambda m: m.data == 'change_group')
 @decorator
 def change_group(callback_query):
