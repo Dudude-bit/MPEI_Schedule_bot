@@ -15,7 +15,7 @@ def get_or_create_schedule(connection, weekday, redis_obj: redis.Redis,
                            callback_query, week_num):
     groupoid = redis_obj.get(f'user_groupoid:{callback_query.from_user.id}').decode('utf8')
     query = f"""
-    SELECT num_object, auditory, object, slug FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}' AND week = '{week_num}'
+    SELECT num_object, auditory, object, slug FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}' AND week = '{week_num}' ORDER BY num_object
     """
     with connection as conn:
         with conn.cursor() as cursor:
@@ -29,7 +29,7 @@ def get_or_create_schedule(connection, weekday, redis_obj: redis.Redis,
     else:
         parsing.parsing_schedule(connection, groupoid, redis_obj)
         query = f"""
-        SELECT num_object, auditory, object, slug FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}' AND week = '{week_num}'
+        SELECT num_object, auditory, object, slug FROM schedule WHERE groupoid = '{groupoid}' AND WeekDay = '{weekday}' AND week = '{week_num}' ORDER BY num_object
         """
         with connection as conn:
             with conn.cursor() as cursor:
