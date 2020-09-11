@@ -2,7 +2,7 @@ import datetime
 import random
 import redis
 import telebot
-
+import os
 from telebot.apihelper import ApiException
 
 import db
@@ -10,7 +10,7 @@ import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = '1190382600:AAETgcfBMvBS_lqdwKKrN4IuDN9YSXmtsig'
+TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -40,6 +40,38 @@ def handling_start(message):
         bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
 
 
+@bot.callback_query_handler(func=lambda m: m.data == 'about')
+@bot.message_handler(commands=['about'])
+def about_handler(message):
+    kb = telebot.types.InlineKeyboardMarkup(row_width=1)
+    btn1 = telebot.types.InlineKeyboardButton(text='Telegram', url='https://t.me/Justnikcname')
+    btn2 = telebot.types.InlineKeyboardButton(text='Vk', url='https://vk.com/kirillinyakin')
+    btn3 = telebot.types.InlineKeyboardButton(text='GitHub', url='https://github.com/Dudude-bit/MPEI_Schedule_bot')
+    btn4 = telebot.types.InlineKeyboardButton(text='DonationAlerts', url='https://www.donationalerts.com/r/userelliot')
+    btn5 = telebot.types.InlineKeyboardButton(text='В главное меню', callback_data='back_to_main')
+    count_users = redis.scard('unique_users')
+    kb.add(btn1, btn2, btn3, btn4, btn5)
+    text = f"""
+    Привет, этим ботом пользуются {count_users} студентов! Если Вы хотите со мной связаться, то вот мои контакты:
+TG: https://t.me/Justnikcname
+VK: https://vk.com/kirillinyakin
+Если вдруг захотите посмотреть на мой код и улучшить его, так как я только начинаю хоть что то серьезное делать, то вот ссылка на GitHub:
+GitHub: https://github.com/Dudude-bit/MPEI_Schedule_bot
+Ну а если Вы вдруг захотите оплатить мой сервер, на котором держится этот бот(всего лишь 40 рублей в месяц XD), то вот ссылка на DonationAlerts:
+DonationAlerts: https://www.donationalerts.com/r/userelliot
+Спасибо за то, что пользуетесь моим ботом ))
+    """
+    if type(message) == telebot.types.Message:
+        bot.send_message(message.chat.id, text, reply_markup=kb, disable_web_page_preview=True)
+    else:
+        try:
+            bot.edit_message_text(text, message.message.chat.id, message.message.message_id,
+                                  disable_web_page_preview=True,
+                                  reply_markup=kb)
+        except ApiException:
+            pass
+
+
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
 @decorator
 def handling_back_to_main(callback_query):
@@ -56,7 +88,7 @@ def handling_back_to_main(callback_query):
         continue_text = f'МЭИшник {emoji}. Сегодня идет {current_week} неделя'
     try:
         bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
-                          message_id=callback_query.message.message_id, reply_markup=kb)
+                              message_id=callback_query.message.message_id, reply_markup=kb)
     except ApiException:
         pass
 
@@ -88,7 +120,7 @@ def handling_schedule(callback_query):
     kb.row(btn)
     try:
         bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
-                          chat_id=callback_query.message.chat.id, reply_markup=kb)
+                              chat_id=callback_query.message.chat.id, reply_markup=kb)
     except ApiException:
         pass
 

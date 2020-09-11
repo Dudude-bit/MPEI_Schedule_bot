@@ -21,8 +21,9 @@ def create_main_keyboard():
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='weekdays:current')
     btn2 = telebot.types.InlineKeyboardButton(text='Поменять группу', callback_data='change_group')
+    btn3 = telebot.types.InlineKeyboardButton(text='О боте', callback_data='about')
     kb.row(btn1)
-    kb.row(btn2)
+    kb.row(btn2, btn3)
     return kb
 
 
