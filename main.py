@@ -19,6 +19,7 @@ redis = redis.Redis()
 @bot.message_handler(commands=['start'])
 @decorator
 def handling_start(message):
+    bot.send_message(message.chat.id, 'TESTING')
     try:
         bot.delete_message(message.chat.id, message.message_id)
     except ApiException:
