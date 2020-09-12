@@ -13,10 +13,6 @@ def generate_slug(redis_obj):
     return slug
 
 
-def normalize_schedule(schedule_list):
-    return list(map(lambda x: (x['num'], x['room'], x['name'], x['slug']), schedule_list))
-
-
 def create_main_keyboard():
     kb = telebot.types.InlineKeyboardMarkup()
     btn1 = telebot.types.InlineKeyboardButton(text='Посмотреть расписание', callback_data='weekdays:current')
