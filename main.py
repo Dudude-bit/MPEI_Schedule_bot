@@ -35,7 +35,6 @@ def handling_start(message):
         continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
         bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
     else:
-        bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
         bot.send_message(message.chat.id, 'Привет, Введите, пожалуйста, номер группы')
         bot.register_next_step_handler_by_chat_id(message.chat.id, get_new_group)
 
