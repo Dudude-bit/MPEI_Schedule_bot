@@ -10,7 +10,7 @@ import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = os.getenv('TOKENTEST')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -136,8 +136,9 @@ def get_schedule(callback_query):
         schedule = db.get_or_create_schedule(connection, weekday, redis, callback_query, week_num)
         kb = telebot.types.InlineKeyboardMarkup()
         for i in schedule:
-            text = f'{i[0]}) {i[2]} {i[1]}'
-            btn = telebot.types.InlineKeyboardButton(text=text, callback_data=f'get_info:{i[3]}:{what_week}')
+            print(i)
+            text = f'{i.num_object}) {i.object} {i.auditory}'
+            btn = telebot.types.InlineKeyboardButton(text=text, callback_data=f'get_info:{i.slug}:{what_week}')
             kb.row(btn)
         btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data=f'weekdays:{what_week}')
         kb.row(btn)
@@ -163,8 +164,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
         information = db.get_information_about_subject(db.create_connection(), id_schedule)[0]
     except IndexError:
         bot.answer_callback_query(callback_query.id,
-                                  text='Хмм... Вы пытаетесь получить старое расписание. Нажмите, пожалуйста, назад и \
-                                        выберите заново день недели',
+                                  text='Хмм... Вы пытаетесь получить старое расписание. Нажмите, пожалуйста, назад и выберите заново день недели',
                                   show_alert=True)
         return
     time_subj_num = {
@@ -177,13 +177,13 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
         7: '20:30 - 22:00'
     }
     text = f"""
-    День недели:{information[1]}
-Номер пары:{information[2]}
-Название предмета:{information[3]}
-Тип пары:{information[7]}
-Преподаватель:{information[6]}
-Кабинет:{information[5]}
-Время пары: {time_subj_num[information[2]]}
+    День недели:{information.weekday}
+Номер пары:{information.num_object}
+Название предмета:{information.object}
+Тип пары:{information.object_type}
+Преподаватель:{information.teacher}
+Кабинет:{information.auditory}
+Время пары: {time_subj_num[information.num_object]}
     """
     try:
         bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
