@@ -10,7 +10,7 @@ import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = os.getenv('TOKENTEST')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
