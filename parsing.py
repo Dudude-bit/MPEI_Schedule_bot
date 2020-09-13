@@ -18,7 +18,7 @@ def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
     }
     redis_obj.sadd('has_schedule', groupoid)
     url = f'http://ts.mpei.ru/api/schedule/group/{groupoid}'
-    today = datetime.datetime.now()
+    today = datetime.datetime.now() + datetime.timedelta(hours=3)
     monday_of_this_week = today + datetime.timedelta(days=-today.weekday())
     monday_of_next_week = monday_of_this_week + datetime.timedelta(weeks=1)
     saturday_of_this_week = monday_of_this_week + datetime.timedelta(days=6)
