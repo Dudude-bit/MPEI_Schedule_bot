@@ -10,7 +10,7 @@ import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = os.getenv('TOKENTEST')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -71,6 +71,19 @@ DonationAlerts: https://www.donationalerts.com/r/userelliot
             pass
 
 
+@bot.callback_query_handler(func=lambda m: m.data == 'call_schedule')
+def get_schedule_call(callback_query):
+    try:
+        bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
+    except ApiException:
+        return
+    kb = telebot.types.InlineKeyboardMarkup()
+    btn = telebot.types.InlineKeyboardButton('В главное меню', callback_data='back_to_main')
+    kb.row(btn)
+    sticker_id = 'CAACAgIAAxkBAAIRMF9eFH49vkT2rX5968QLsCcm9NT0AAIBAAOiqcMafGZ5xN8D9x8bBA'
+    bot.send_sticker(callback_query.message.chat.id, sticker_id, reply_markup=kb)
+
+
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
 @decorator
 def handling_back_to_main(callback_query):
@@ -88,8 +101,14 @@ def handling_back_to_main(callback_query):
     try:
         bot.edit_message_text(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id,
                               message_id=callback_query.message.message_id, reply_markup=kb)
-    except ApiException:
-        pass
+    except ApiException as e:
+        result = e.result.json()
+        if result['description'] == "Bad Request: message can't be edited":
+            try:
+                bot.delete_message(callback_query.message.chat.id, callback_query.message.message_id)
+            except ApiException:
+                return
+            bot.send_message(text=f'Привет, {continue_text}', chat_id=callback_query.message.chat.id, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda m: m.data.startswith('weekdays'))
@@ -115,7 +134,7 @@ def handling_schedule(callback_query):
         else telebot.types.InlineKeyboardButton(
         text=f'Следующая неделя', callback_data='weekdays:next')
     kb.row(btn)
-    btn = telebot.types.InlineKeyboardButton(text='Назад', callback_data='back_to_main')
+    btn = telebot.types.InlineKeyboardButton(text='В главное меню', callback_data='back_to_main')
     kb.row(btn)
     try:
         bot.edit_message_text('Выберите день недели', message_id=callback_query.message.message_id,
