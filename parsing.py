@@ -41,7 +41,7 @@ def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
                 WeekDay = num_dayweek_to_string[item['dayOfWeek']]
                 num_object = item['lessonNumberStart']
                 auditory = item['auditorium']
-                teacher = item['lecturer']
+                teacher = item['lecturer'] if 'не определена' not in item['teacher'].lower() else 'Не определен'
                 obj = item['discipline']
                 object_type = item['kindOfWork']
                 slug = services.generate_slug(redis_obj)
@@ -54,7 +54,7 @@ def parsing_schedule(connection, groupoid, redis_obj: redis.Redis):
                 WeekDay = num_dayweek_to_string[item['dayOfWeek']]
                 num_object = item['lessonNumberStart']
                 auditory = item['auditorium']
-                teacher = item['lecturer']
+                teacher = item['lecturer'] if 'не определена' not in item['teacher'].lower() else 'Не определен'
                 obj = item['discipline']
                 object_type = item['kindOfWork']
                 slug = services.generate_slug(redis_obj)
