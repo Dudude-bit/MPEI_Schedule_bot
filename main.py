@@ -1,16 +1,18 @@
 import datetime
 import random
 import redis
+import requests
 import telebot
 import os
+import re
 from telebot.apihelper import ApiException
-
+from bs4 import BeautifulSoup
 import db
 import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = os.getenv('TOKENTEST')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -82,6 +84,50 @@ def get_schedule_call(callback_query):
     kb.row(btn)
     sticker_id = 'CAACAgIAAxkBAAIRMF9eFH49vkT2rX5968QLsCcm9NT0AAIBAAOiqcMafGZ5xN8D9x8bBA'
     bot.send_sticker(callback_query.message.chat.id, sticker_id, reply_markup=kb)
+
+
+@bot.callback_query_handler(func=lambda m: m.data == 'bars')
+@decorator
+def handling_bars(callback_query):
+    bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
+    session_id = redis.get(f'session_id:{callback_query.from_user.id}')
+    if not session_id:
+        bot.answer_callback_query(callback_query.id, 'Введите, пожалуйста, логин и пароль в формате ЛОГИН:ПАРОЛЬ', show_alert=True)
+        bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, change_password_and_username)
+    else:
+        session_id = session_id.decode('utf8')
+        cookies_dict = {
+            'auth_bars': session_id
+        }
+        request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
+        text = request.text
+        if 'studentID' not in request.url:
+            login = redis.get(f'login:{callback_query.from_user.id}').decode('utf8')
+            password = redis.get(f'password:{callback_query.from_user.id}').decode('utf8')
+            session = requests.session()
+            session.post('https://bars.mpei.ru/bars_web/', data={
+                'UserName': login,
+                'Password': password
+            })
+            try:
+                session_id = session.cookies.get_dict()['auth_bars']
+                redis.set(f'session_id:{callback_query.from_user.id}', session_id)
+                cookies_dict = {
+                    'auth_bars': session_id
+                }
+                request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
+                text = request.text
+            except KeyError:
+                bot.answer_callback_query(callback_query.id, 'Такое ощущение, что у Вас поменялся пароль на аккаунте, либо произошла другая непредвиденная ошибка.')
+                redis.delete(f'session_id:{callback_query.from_user.id}')
+                redis.delete(f'login:{callback_query.from_user.id}')
+                redis.delete(f'password:{callback_query.from_user.id}')
+                return
+        bs = BeautifulSoup(text, 'lxml')
+        all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
+        print(';'.join([i.find('strong').text.strip() for i in all_subjects]))
+
+
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
@@ -248,6 +294,33 @@ def get_new_group(message: telebot.types.Message):
     redis.set(f'user_group:{message.from_user.id}', value=group)
     continue_text = f'студент {group} {emoji}'
     bot.send_message(message.chat.id, f'Привет, {continue_text}', reply_markup=kb)
+
+
+def change_password_and_username(message):
+    temp_list = message.text.split(':')
+    if len(temp_list) != 2:
+        bot.send_message(message.chat.id, 'Хмм... Походу Вы в неправильном формате ввели логин и пароль')
+        handling_start(message)
+    else:
+        login, password = temp_list
+        session = requests.session()
+        session.post('https://bars.mpei.ru/bars_web/', data={
+            'UserName': login,
+            'Password': password
+        })
+        try:
+            session_id = session.cookies.get_dict()['auth_bars']
+        except KeyError:
+            bot.send_message(message.chat.id, 'Хмм... Походу Вы ввели неправильно логин или пароль')
+            handling_start(message)
+        else:
+            redis.set(f'session_id:{message.from_user.id}', session_id)
+            redis.set(f'login:{message.from_user.id}', login)
+            redis.set(f'password:{message.from_user.id}', password)
+            handling_start(message)
+
+
+
 
 
 if __name__ == '__main__':
