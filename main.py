@@ -182,7 +182,7 @@ def handling_bars(callback_query):
             img = imgkit.from_string(templ.render(subjects_list=subjects_list, color_dict=color_dict), False)
             bot.send_photo(callback_query.message.chat.id, img)
     else:
-        bot.answer_callback_query(callback_query.id, "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВКб ссылка есть в разделе 'О Боте'")
+        bot.answer_callback_query(callback_query.id, "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВКб ссылка есть в разделе 'О Боте'", show_alert=True)
 
 
 
