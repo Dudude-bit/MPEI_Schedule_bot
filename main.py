@@ -16,7 +16,7 @@ import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = '1090473692:AAFfHjX90PBhLkR5OWOVwnbMKiAtt1qXShc'
+TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -115,7 +115,6 @@ def get_schedule_call(callback_query):
 @decorator
 def handling_bars(callback_query):
     user_id = callback_query.from_user.id
-    print(user_id)
     if user_id in ALLOWED_BARS_USER_IDS:
         # bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
         # session_id = redis.get(f'session_id:{callback_query.from_user.id}')
@@ -160,17 +159,29 @@ def handling_bars(callback_query):
                 name_subject = item.find('strong').text.replace('Дисциплина', '').replace('\"', '').strip()
                 table = item.find_next_sibling()
                 regex = '\d{1,2}. [а-яА-я]+'
-                regex_km = '(\d){1,2}.'
                 all_tds_with_km = table.find_all('td', text=re.compile(regex))
                 text_all_tds_with_km = [i.text.strip() for i in all_tds_with_km]
-                km_num = int(re.findall(regex_km, text_all_tds_with_km[-1])[0])
+                km_num = len(text_all_tds_with_km)
                 subjects_list.append({})
                 subjects_list[-1]['name'] = name_subject
                 subjects_list[-1]['km_num'] = km_num
+                subjects_list[-1]['marks'] = []
+                for i in range(km_num):
+                    mark = all_tds_with_km[i].find_next_siblings()[-1].text.strip().split()
+                    subjects_list[-1]['marks'].append(mark[0] if len(mark) > 0 else '')
 
             with open('bars_template.html') as f:
                 templ = Template(f.read())
-            img = imgkit.from_string(templ.render(subjects_list=subjects_list), False)
+            color_dict = {
+                '5': 'green',
+                '4': 'yellow',
+                '3': 'orange',
+                '2': 'red',
+                '1': 'red',
+                '0': 'red',
+                '': 'grey'
+            }
+            img = imgkit.from_string(templ.render(subjects_list=subjects_list, color_dict=color_dict), False)
             bot.send_photo(callback_query.message.chat.id, img)
     else:
         bot.answer_callback_query(callback_query.id, 'Эта функция находится в разработке')

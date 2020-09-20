@@ -6,35 +6,37 @@
     <style>
         body{
             box-sizing: border-box;
-            font-size: 25px;
-            display: flex;
+            font-size: 10px;
+            font-weight: bold;
             }
-        .container{
-            flex-direction: column;
-            flex-grow: 1;
-                    }
+        table{
+            border-spacing: 10px;
+        }
         .subject_name{
             width: 400px;
-                    }
-        .row{
-            border: black solid 1px;
         }
+        .km-nums{
+            margin-right: 15px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="subject_name">
-                Название предмета
-            </div>
-        </div>
-        {% for i in subjects_list %}
-            <div class="row">
-                <div class="subject_name">
-                    {{i['name']}}
-                </div>
-            </div>
+    <table>
+        <tr><td class="subject_name">Название предмета</td></tr>
+        {% for item in subjects_list %}
+            <tr>
+                <td class="subject_name"></td>
+                {% for i in range(1, item['km_num'] + 1) %}
+                    <td class="km-nums">КМ-{{i}}</td>
+                {% endfor %}
+            </tr>
+            <tr><td class="subject_name">{{item['name']}}</td>
+                {% for mark in item.marks %}
+                    <td style="background-color: {{color_dict[mark]}}; text-align: center">{{mark}}</td>
+                {% endfor %}
+            </tr>
         {% endfor %}
-    </div>
+    </table>
 </body>
 </html>
