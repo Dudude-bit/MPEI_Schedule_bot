@@ -5,6 +5,9 @@ import requests
 import telebot
 import os
 import re
+from jinja2 import Template
+from prettytable import PrettyTable
+import time
 from telebot.apihelper import ApiException
 from bs4 import BeautifulSoup
 import db
@@ -12,11 +15,12 @@ import exceptions
 import parsing
 from services import create_main_keyboard, decorator
 
-TOKEN = os.getenv('TOKENTEST')
+TOKEN = '1090473692:AAFfHjX90PBhLkR5OWOVwnbMKiAtt1qXShc'
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
 
+ALLOWED_BARS_USER_IDS = ['449030562']
 
 @bot.message_handler(commands=['start'])
 @decorator
@@ -72,6 +76,26 @@ DonationAlerts: https://www.donationalerts.com/r/userelliot
         except ApiException:
             pass
 
+@bot.inline_handler(func=lambda x: True)
+def get_schedule_in_chat(inline_query):
+    try:
+        group, weekday = inline_query.query.split()
+        weekday = weekday.lower().capitalize()
+    except ValueError:
+        return
+    th = [weekday]
+    try:
+        groupoid = parsing.get_groupoid_or_raise_exception(group)
+    except exceptions.MpeiBotException:
+        return
+    table = PrettyTable(th)
+    result = telebot.types.InlineQueryResultArticle(inline_query.id, 'Расписание', input_message_content=telebot.types.InputTextMessageContent(str(table)))
+    bot.answer_inline_query(inline_query.id, results=[result])
+
+
+
+
+
 
 @bot.callback_query_handler(func=lambda m: m.data == 'call_schedule')
 def get_schedule_call(callback_query):
@@ -89,7 +113,8 @@ def get_schedule_call(callback_query):
 @bot.callback_query_handler(func=lambda m: m.data == 'bars')
 @decorator
 def handling_bars(callback_query):
-    if False:
+    user_id = callback_query.from_user.id
+    if user_id in ALLOWED_BARS_USER_IDS:
         bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
         session_id = redis.get(f'session_id:{callback_query.from_user.id}')
         if not session_id:
@@ -119,16 +144,24 @@ def handling_bars(callback_query):
                     request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
                     text = request.text
                 except KeyError:
-                    bot.answer_callback_query(callback_query.id, 'Такое ощущение, что у Вас поменялся пароль на аккаунте, либо произошла другая непредвиденная ошибка.')
+                    bot.answer_callback_query(callback_query.id, 'Такое ощущение, что у Вас поменялся пароль или логин на аккаунте, либо произошла другая непредвиденная ошибка.')
                     redis.delete(f'session_id:{callback_query.from_user.id}')
                     redis.delete(f'login:{callback_query.from_user.id}')
                     redis.delete(f'password:{callback_query.from_user.id}')
                     return
             bs = BeautifulSoup(text, 'lxml')
             all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
-            print(';'.join([i.find('strong').text.strip() for i in all_subjects]))
+            kb = telebot.types.InlineKeyboardMarkup()
+            for item in all_subjects:
+                name_subject = item.find('strong').text.replace('Дисциплина', '').replace('\"', '').strip()
+                btn = telebot.types.InlineKeyboardButton(text=name_subject, callback_data='123')
+                kb.row(btn)
+                tbody = item.find_next_sibling().find('tbody')
+            btn = telebot.types.InlineKeyboardButton(text='В главное меню', callback_data='back_to_main')
+            kb.row(btn)
+            bot.send_message(callback_query.message.chat.id, 'Ваши предметы', reply_markup=kb)
     else:
-        bot.send_message(callback_query.message.chat.id, 'Эта функция находится в разработке')
+        bot.answer_callback_query(callback_query.message.chat.id, 'Эта функция находится в разработке')
 
 
 
