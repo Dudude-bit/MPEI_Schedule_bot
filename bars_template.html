@@ -2,9 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>BARS</title>
+    <style>
+        body{
+            box-sizing: border-box;
+            font-size: 15px;
+            display: flex;
+            }
+        .container{
+            flex-direction: column;
+            flex-grow: 1;
+                    }
+        .subject_name{
+            width: 270px;
+                    }
+    </style>
 </head>
 <body>
-
+    <div class="container">
+        <div class="row">
+            <div class="subject_name">
+                Название предмета
+            </div>
+        </div>
+        {% for i in subjects_names_list %}
+            <div class="row">
+                <div class="subject_name">
+                    {{i['name']}}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </body>
 </html>

@@ -1,0 +1,12 @@
+body{
+    height: 1080px;
+    width: 1920px;
+    display: flex;
+}
+.container{
+    flex-direction: column;
+    flex-grow: 1;
+}
+.subject_name{
+    width: 300px;
+}

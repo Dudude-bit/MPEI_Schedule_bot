@@ -4,10 +4,9 @@ import redis
 import requests
 import telebot
 import os
-import re
 from jinja2 import Template
 from prettytable import PrettyTable
-import time
+import imgkit
 from telebot.apihelper import ApiException
 from bs4 import BeautifulSoup
 import db
@@ -20,7 +19,7 @@ bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
 
-ALLOWED_BARS_USER_IDS = ['449030562']
+ALLOWED_BARS_USER_IDS = [449030562]
 
 @bot.message_handler(commands=['start'])
 @decorator
@@ -114,6 +113,7 @@ def get_schedule_call(callback_query):
 @decorator
 def handling_bars(callback_query):
     user_id = callback_query.from_user.id
+    print(user_id)
     if user_id in ALLOWED_BARS_USER_IDS:
         bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
         session_id = redis.get(f'session_id:{callback_query.from_user.id}')
@@ -151,17 +151,18 @@ def handling_bars(callback_query):
                     return
             bs = BeautifulSoup(text, 'lxml')
             all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
+            subjects_names_list = []
             kb = telebot.types.InlineKeyboardMarkup()
             for item in all_subjects:
                 name_subject = item.find('strong').text.replace('Дисциплина', '').replace('\"', '').strip()
-                btn = telebot.types.InlineKeyboardButton(text=name_subject, callback_data='123')
-                kb.row(btn)
-                tbody = item.find_next_sibling().find('tbody')
-            btn = telebot.types.InlineKeyboardButton(text='В главное меню', callback_data='back_to_main')
-            kb.row(btn)
-            bot.send_message(callback_query.message.chat.id, 'Ваши предметы', reply_markup=kb)
+                subjects_names_list.append({})
+                subjects_names_list[-1]['name'] = name_subject
+            with open('bars_template.html') as f:
+                templ = Template(f.read())
+            img = imgkit.from_string(templ.render(subjects_names_list=subjects_names_list), False)
+            bot.send_photo(callback_query.message.chat.id, img)
     else:
-        bot.answer_callback_query(callback_query.message.chat.id, 'Эта функция находится в разработке')
+        bot.answer_callback_query(callback_query.id, 'Эта функция находится в разработке')
 
 
 
