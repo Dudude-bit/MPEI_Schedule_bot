@@ -1,60 +1,1386 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>BARS</title>
-    <link rel="stylesheet" href="bars.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/bars_web/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/bars_web/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/bars_web/favicon-16x16.png">
+<link rel="manifest" href="/bars_web/site.webmanifest.json">
+
+<link rel="shortcut icon" type="image/x-icon" href="/bars_web/favicon.ico">
+<link rel="shortcut icon" type="image/ico" href="/bars_web/favicon.ico">
+
+    <title>ЛКС Инякин К.И.</title>
+
+    <link href="/bars_web/bundles/css/bootstrap?v=rh6JdpwbbuMWWH0V84Hf-1Yie1ChydksJfyIhfpOejg1" rel="stylesheet">
+
+    <link href="/bars_web/bundles/css/select2?v=kx22q-5TwbotcfH-gCgE1kxPbGtHoowJJFectku-t181" rel="stylesheet">
+
+    <link href="/bars_web/bundles/css/icc_menu?v=lcZSODP6zSXjqksoNCZW2GgswCkng0vOdmRxGMDXDGw1" rel="stylesheet">
+
+    <link href="/bars_web/bundles/css/icc_site?v=lf75k76mwtd9sL10POzwg11Oa--_UFL5ueYOPNH0WF01" rel="stylesheet">
+
+
+
+    <script src="/bars_web/bundles/js/modernizr?v=inCVuEFe6J4Q07A0AcRsbJic_UE5MwpRMNGcOtk94TE1"></script>
+
+    <script src="/bars_web/bundles/js/jquery?v=-q0mu_nfpVSh1oEdCfdpRAF95DCFahRKKA9-uRgnPMw1"></script>
+
+    <script src="/bars_web/bundles/js/bootstrap?v=u7F1O-6XPmNDCqVgEcdaRCXx3NCfqBh9h-HZIPeM6a41"></script>
+
+
+    <script src="/bars_web/bundles/js/select2?v=zQ28PAcHfA4bfPQNDiNXgXrLve2S_HYvh9ksdEdkRjQ1"></script>
+
+    <script src="/bars_web/bundles/js/jqueryval?v="></script>
+
+    <script src="/bars_web/bundles/js/icc?v=ZG6kXFHKvtPnCu-_op2wCXmBefq6WBx8bW4VSfRcFoU1"></script>
+
+    <script src="/bars_web/bundles/js/icc_menu?v=JurA8DPgzyjih-WQOJ8wFz8lKLKCJQN-jISZRNIsXfI1"></script>
+
+
+
+
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-118266708-3"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'UA-118266708-3');</script>
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="subject_name">
-                Название предмета
+    <div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div id="modalFormContent"></div>
+        </div>
+    </div>
+</div>
+
+    <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+
+
+        <a class="navbar-brand" id="menu-toggle" data-toggle="collapse" style="cursor: pointer">
+            <i class="fa fa-bars"></i>
+        </a>
+
+        <a class="navbar-brand" href="#">
+            БАРС
+        </a>
+
+        <div class="navbar-collapse collapse">
+            <ul class="navbar-nav ml-auto">
+
+                    <li>
+                        <a class="nav-link" href="/bars_web/Service/RefreshPermissions">
+                            <i class="fa fa-user"></i>
+                            PUBLIC\IniakinKI
+                        </a>
+                    </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/bars_web/Auth/Exit">
+                        <i class="fa fa-sign-out"></i>
+                        <span class="d-none d-sm-inline">Выйти</span>
+                    </a>
+                </li>
+
+
+            </ul>
+        </div>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="wrapper" class="opened">
+
+
+
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+        <li>
+            <div class="list-group icc-menu">
+                    <a data-toggle="collapse" class="list-group-item bg-light" href="#miSection1">Раздел 1</a>
+                    <div id="miSection1" class="collapse show">
+                            <a class="list-group-item activeUrl" href="/bars_web/Student/Part1?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">
+                                <span class="fa fa-list-ol"></span>
+                                Оценки БАРС
+                            </a>
+                            <a class="list-group-item " href="/bars_web/Student/Part1_ControlPoint?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">
+                                <span class="fa fa-calendar-plus-o"></span>
+                                Точки контроля
+                            </a>
+                            <a class="list-group-item " href="/bars_web/Student/Part1_Summary?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">
+                                <span class="fa fa-graduation-cap"></span>
+                                Сводка
+                            </a>
+
+
+                            <a class="list-group-item " href="/bars_web/ST_Part1/TaskReport/ListStudent_TaskReport?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">
+                                <span class="fa fa-file-text"></span>
+                                Отчёты
+                            </a>
+                    </div>
+
+                    <a class="list-group-item bg-light " href="/bars_web/Student/Part2?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">Раздел 2</a>
+
+                    <a class="list-group-item bg-light " href="/bars_web/Student/Part3?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">Раздел 3</a>
+
+
+                    <a data-toggle="collapse" class="list-group-item bg-light" href="#miEvents">События</a>
+                    <div id="miEvents" class="collapse show">
+
+                            <a class="list-group-item " href="/bars_web/ST_LK/SessionMark/ListStudent__SessionMark?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">
+                                <span class="fa fa-list-ol"></span>
+                                Сессии
+                            </a>
+
+                        <a class="list-group-item " href="/bars_web/ST_LK/StudentEvent/ListStudent__StudentEvent?studentID=e0d7177a-5fb9-e911-80cf-005056beeedd">
+                            <span class="fa fa-bookmark"></span>
+                            Благодарности
+                        </a>
+                    </div>
+
+
+                </div>
+        </li>
+    </ul>
+</div>
+
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+
+
+
+
+
+<div class="mt-2 ml-2">
+    <h4>Раздел 1. Учебная деятельность</h4>
+</div>
+
+<hr class="hr-separator">
+
+<div class="offset-xl-1 col-xl-10">
+    <div id="div-FormHeader">
+
+
+<script>
+    $(document).ready(function () {
+        $("#btnErrorInfo").click(function (e) {
+            var url = '/bars_web/Student/ErrorInfo';
+            var srcElement = $(this);
+            srcElement.attr("disabled", "true");
+            $("#modalFormContent").load(
+                url, function (response, status, xhr) {
+                    $("#modalForm").modal("show");
+                    srcElement.removeAttr("disabled");
+                });
+        });
+
+        $('#ddl_FilterSemester').selectpicker({ styleBase: 'btn btn-light border border-secondary rounded-1' });
+
+        $('#ddl_FilterSemester').change(function () {
+            var semesterIDValue = $(this).val();
+
+            var query = {};
+
+            query.FilterSemester = {};
+            query.FilterSemester.Value = semesterIDValue;
+
+            var data = {
+                'studentID': 'e0d7177a-5fb9-e911-80cf-005056beeedd',
+                'query': JSON.stringify(query),
+                'currentAction': 'Part1'
+            };
+
+            ajaxSubmitFilter(data);
+        });
+    });
+
+    function ajaxSubmitFilter(data) {
+        // srcElement.attr("disabled", "true");
+        $.ajax({
+            url: '/bars_web/Student/fltSubmit',
+            type: "POST",
+            data: data,
+            success: function (result) {
+                if (result.success) {
+                    window.location.href = result.url;
+                } else {
+                if (result.error) {
+                    alert(result.error);
+                } else {
+                    alert("При выполнении запроса произошла ошибка. Попробуйте позже или обратитесь в техническую поддержку.");
+                }
+                // srcElement.removeAttr("disabled");
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                showError(xhr);
+                // srcElement.removeAttr("disabled");
+            }
+        });
+    }
+</script>
+
+<style>
+    .ddl_FilterSemester {
+        width: 250px !important;
+        padding-left: 15px;
+    }
+</style>
+
+<div class="row">
+    <div class="col m-0 p-0">
+        <div class="form-row">
+            <div class="col-sm">
+                <span class="font-weight-bold">
+                    Инякин Кирилл Игоревич (№ЗК - 0020194635) ТФ-14-19
+                </span>
+
+
+
+                <a href="/bars_web/Timetable/RUZ/Timetable?rt=3&amp;name=%D0%A2%D0%A4-14-19" target="_blank" style="font-size: 12px; cursor: pointer">
+                    <em>
+                        К расписанию <span class="badge badge-info">beta test</span>
+                    </em>
+                </a>
+
+                <ul class="list-inline mb-0">
+                    <li class="list-inline-item">Курс - <strong>2</strong></li>
+                    <li class="list-inline-item">Квалификация - <strong>Бакалавр</strong></li>
+                    <li class="list-inline-item">Статус обучения - <strong>Обучается</strong></li>
+                    <li class="list-inline-item">Начало зачётной недели - <strong></strong></li>
+                    <li class="list-inline-item">Ср. учебный рейтинг - <strong>60</strong></li>
+                </ul>
+
+                <a id="btnErrorInfo" href="#" style="font-size: 12px; cursor: pointer"><em>Ошибка в характеристиках обучения?</em></a>
+            </div>
+
+            <div class="col-sm">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item">
+                            <span id="stud_rate">Рейтинг (2020/2021-1):</span>
+                            <strong><span id="total_score"> 11</span></strong>
+                        </li>
+                        <li class="list-inline-item">
+                            <span>Учеб.:</span>
+                            <strong><span id="study_score"> 19</span></strong>
+                        </li>
+                        <li class="list-inline-item">
+                            <span>Науч.:</span>
+                            <strong><span id="science_score"> 0</span></strong>
+                        </li>
+                        <li class="list-inline-item">
+                            <span>Соц.:</span>
+                            <strong><span id="social_score"> 0</span></strong>
+                        </li>
+                        <li class="list-inline-item">
+                            <span>Спорт.:</span>
+                            <strong><span id="sport_score"> 0</span></strong>
+                        </li>
+                        <li class="list-inline-item">
+                            <span>Соц. акт.:</span>
+                            <strong><span id="social_activity_score"> 0 </span></strong>
+                        </li>
+                    </ul>
+
             </div>
         </div>
-        
-            <div class="row">
-                <div class="subject_name">
-                    Деловая коммуникация (ЗЕ - 3)
-                </div>
-            </div>
-        
-            <div class="row">
-                <div class="subject_name">
-                    Математика (ЗЕ - 8)
-                </div>
-            </div>
-        
-            <div class="row">
-                <div class="subject_name">
-                    Математические методы моделирования физических процессов (ЗЕ - 4)
-                </div>
-            </div>
-        
-            <div class="row">
-                <div class="subject_name">
-                    Мировые цивилизации и мировые культуры (ЗЕ - 2)
-                </div>
-            </div>
-        
-            <div class="row">
-                <div class="subject_name">
-                    Прикладная физика (ЗЕ - 4)
-                </div>
-            </div>
-        
-            <div class="row">
-                <div class="subject_name">
-                    ФИЗИКА ОБЩАЯ (ЗЕ - 7)
-                </div>
-            </div>
-        
-            <div class="row">
-                <div class="subject_name">
-                    Элективные курсы по физической культуре и спорту (ЗЕ - 2)
-                </div>
-            </div>
-        
     </div>
+</div>
+
+<hr class="hr-separator">
+
+<div class="row">
+    <div class="col mb-2 p-0">
+        <label class="col-form-label">Записи раздела 1 и рейтинг отображаются для семестра обучения</label>
+        <div class="dropdown bootstrap-select ddl_FilterSemester"><select class="ddl_FilterSemester" id="ddl_FilterSemester" name="ddl_FilterSemester"><option value="16">2020/2021, Осенний семестр</option>
+<option value="15">2019/2020, Весенний семестр</option>
+<option value="14">2019/2020, Осенний семестр</option>
+<option value="12">2018/2019, Весенний семестр</option>
+<option value="11">2018/2019, Осенний семестр</option>
+<option value="9">2017/2018, Весенний семестр</option>
+<option value="7">2017/2018, Осенний семестр</option>
+<option value="4">2016/2017, Весенний семестр</option>
+</select><button type="button" tabindex="-1" class="btn border border-secondary rounded-1 dropdown-toggle btn-light" data-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" data-id="ddl_FilterSemester" title="2020/2021, Осенний семестр"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">2020/2021, Осенний семестр</div></div> </div></button><div class="dropdown-menu "><div class="inner show" role="listbox" id="bs-select-1" tabindex="-1"><ul class="dropdown-menu inner show" role="presentation"></ul></div></div></div>
+    </div>
+</div>
+    </div>
+</div>
+
+<div class="offset-xl-1 col-xl-10 px-0">
+    <div id="div-Student_SemesterSheet">
+
+<script src="/bars_web/bundles/js/icc_bars_student_part1?v=owrGnSIbS1PlC0HleFMtjLQLvWuTQVSIH2o2Krx4rhY1"></script>
+
+
+    <span class="h3">
+        2020/2021, Осенний семестр
+    </span>
+    <a href="#" class="h5" id="s_ss_All" role="button">Развернуть всё</a>
+        <div class="my-2">
+            <strong>
+                Дисциплина "Деловая коммуникация" (ЗЕ - 3)
+
+
+            </strong>
+
+            <a href="#s_ss_0" role="button">Развернуть</a>
+        </div>
+        <div id="s_ss_0" class="collapse">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped table-bordered table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Название контрольного мероприятия</th>
+                            <th>Вес, %</th>
+                            <th>Срок проведения, № недели</th>
+                            <th>Оценка, дата получения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><em>Текущий контроль:</em></td>
+                        </tr>
+
+                            <tr>
+                                <td>
+                                    1. Контрольная работа «Модели коммуникации»
+                                </td>
+                                <td>20</td>
+                                <td>
+                                    4 (21.09.2020-27.09.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. Тест «Эффективные и неэффективные коммуникативные процессы»
+                                </td>
+                                <td>15</td>
+                                <td>
+                                    8 (19.10.2020-25.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. Контрольная работа «Способы разрешения конфликтов в организации»
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    12 (16.11.2020-22.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. Защита творческой работы
+                                </td>
+                                <td>40</td>
+                                <td>
+                                    16 (14.12.2020-20.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+
+                        <tr>
+                            <td colspan="3">Балл текущего контроля: </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №1</td>
+                            <td>4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №2</td>
+                            <td>8</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №3</td>
+                            <td>12</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><em>Промежуточная аттестация (зачёт с оценкой):</em></td>
+
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <strong>
+                                    Итоговая оценка:
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="my-2">
+            <strong>
+                Дисциплина "Математика" (ЗЕ - 8)
+
+
+            </strong>
+
+            <a href="#s_ss_1" role="button">Развернуть</a>
+        </div>
+        <div id="s_ss_1" class="collapse">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped table-bordered table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Название контрольного мероприятия</th>
+                            <th>Вес, %</th>
+                            <th>Срок проведения, № недели</th>
+                            <th>Оценка, дата получения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><em>Текущий контроль:</em></td>
+                        </tr>
+
+                            <tr>
+                                <td>
+                                    1. Контрольная работа «Действия с комплексными числами»
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    3 (14.09.2020-20.09.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. Контрольная работа «Случайные события. Случайные величины»
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    7 (12.10.2020-18.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. Контрольная работа  «Вычисление интегралов с помощью вычетов»
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    11 (09.11.2020-15.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. Защита РГР «Математическая статистика»
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    15 (07.12.2020-13.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+
+                        <tr>
+                            <td colspan="3">Балл текущего контроля: </td>
+                            <td>0,0</td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №1</td>
+                            <td>4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №2</td>
+                            <td>8</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №3</td>
+                            <td>12</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><em>Промежуточная аттестация (экзамен):</em></td>
+
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <strong>
+                                    Итоговая оценка:
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="my-2">
+            <strong>
+                Дисциплина "Математические методы моделирования физических процессов" (ЗЕ - 4)
+
+
+            </strong>
+
+            <a href="#s_ss_2" role="button">Развернуть</a>
+        </div>
+        <div id="s_ss_2" class="collapse">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped table-bordered table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Название контрольного мероприятия</th>
+                            <th>Вес, %</th>
+                            <th>Срок проведения, № недели</th>
+                            <th>Оценка, дата получения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><em>Текущий контроль:</em></td>
+                        </tr>
+
+                            <tr>
+                                <td>
+                                    1. КМ-1. Тест №1. Защита ЛР1.Выполнение РЗ1.Часть 1.
+                                </td>
+                                <td>20</td>
+                                <td>
+                                    4 (21.09.2020-27.09.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. КМ-2: Защита лабораторной работы 2.Выполнение РЗ1.Часть 2.
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    8 (19.10.2020-25.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. КМ-3	Контрольная работа №1  «Решение систем уравнений». Защита лабораторной работы № 3 «Решение систем линейных уравнений прямыми методами».
+Выполнение РЗ 1.  Часть 3.
+
+                                </td>
+                                <td>35</td>
+                                <td>
+                                    12 (16.11.2020-22.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. КМ-4.Защита лабораторной работы № 4. «Решение систем линейных уравнений итерационными методами». Выполнение РЗ  Часть 4. Тест «Приближение функций».
+                                </td>
+                                <td>20</td>
+                                <td>
+                                    15 (07.12.2020-13.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+
+                        <tr>
+                            <td colspan="3">Балл текущего контроля: </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №1</td>
+                            <td>4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №2</td>
+                            <td>8</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №3</td>
+                            <td>12</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><em>Промежуточная аттестация (экзамен):</em></td>
+
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <strong>
+                                    Итоговая оценка:
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="my-2">
+            <strong>
+                Дисциплина "Мировые цивилизации и мировые культуры" (ЗЕ - 2)
+
+
+            </strong>
+
+            <a href="#s_ss_3" role="button">Развернуть</a>
+        </div>
+        <div id="s_ss_3" class="collapse">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped table-bordered table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Название контрольного мероприятия</th>
+                            <th>Вес, %</th>
+                            <th>Срок проведения, № недели</th>
+                            <th>Оценка, дата получения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><em>Текущий контроль:</em></td>
+                        </tr>
+
+                            <tr>
+                                <td>
+                                    1. Контрольная работа «Цивилизационно-культурный подход изучения мировой истории. Современные концепции теории и истории цивилизаций»
+                                </td>
+                                <td>15</td>
+                                <td>
+                                    4 (21.09.2020-27.09.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. Тест «Основные понятия теории цивилизаций. Первобытность. Культурные достижения ранних цивилизаций и античности»
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    8 (19.10.2020-25.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. Тест «Особенности цивилизационного развития Запада и Востока в Средневековье и Новое время»
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    12 (16.11.2020-22.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. Тест «Особенности цивилизационного развития Запада и Востока в Средневековье и Новое время»
+                                </td>
+                                <td>35</td>
+                                <td>
+                                    16 (14.12.2020-20.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+
+                        <tr>
+                            <td colspan="3">Балл текущего контроля: </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №1</td>
+                            <td>4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №2</td>
+                            <td>8</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №3</td>
+                            <td>12</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><em>Промежуточная аттестация (зачёт (без оценки)):</em></td>
+
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <strong>
+                                    Итоговая оценка:
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="my-2">
+            <strong>
+                Дисциплина "Прикладная физика" (ЗЕ - 4)
+
+
+            </strong>
+
+            <a href="#s_ss_4" role="button">Развернуть</a>
+        </div>
+        <div id="s_ss_4" class="collapse">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped table-bordered table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Название контрольного мероприятия</th>
+                            <th>Вес, %</th>
+                            <th>Срок проведения, № недели</th>
+                            <th>Оценка, дата получения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><em>Текущий контроль:</em></td>
+                        </tr>
+
+                            <tr>
+                                <td>
+                                    1. Расчетное задание, задачи 1.1 - 1.3
+                                </td>
+                                <td>10</td>
+                                <td>
+                                    4 (21.09.2020-27.09.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. Расчетное задание, задачи 1.4 - 1.5. Контрольная работа № 1
+                                </td>
+                                <td>40</td>
+                                <td>
+                                    8 (19.10.2020-25.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. Расчетное задание, задачи 2.1, 2.2
+                                </td>
+                                <td>10</td>
+                                <td>
+                                    12 (16.11.2020-22.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. Расчетное задание, задачи 2.3, 2.4. Контрольная работа № 2
+                                </td>
+                                <td>40</td>
+                                <td>
+                                    15 (07.12.2020-13.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+
+                        <tr>
+                            <td colspan="3">Балл текущего контроля: </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №1</td>
+                            <td>4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №2</td>
+                            <td>8</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №3</td>
+                            <td>12</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><em>Промежуточная аттестация (экзамен):</em></td>
+
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <strong>
+                                    Итоговая оценка:
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="my-2">
+            <strong>
+                Дисциплина "ФИЗИКА ОБЩАЯ" (ЗЕ - 7)
+
+
+            </strong>
+
+            <a href="#s_ss_5" role="button">Развернуть</a>
+        </div>
+        <div id="s_ss_5" class="collapse">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped table-bordered table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Название контрольного мероприятия</th>
+                            <th>Вес, %</th>
+                            <th>Срок проведения, № недели</th>
+                            <th>Оценка, дата получения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><em>Текущий контроль:</em></td>
+                        </tr>
+
+                            <tr>
+                                <td>
+                                    1. защита лабораторных работ «Электростатика-1»
+                                </td>
+                                <td>8</td>
+                                <td>
+                                    2 (07.09.2020-13.09.2020)
+                                </td>
+
+
+                                <td>
+4 (17.09.20)
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. защита лабораторных работ «Электростатика-2»
+                                </td>
+                                <td>8</td>
+                                <td>
+                                    4 (21.09.2020-27.09.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. защита лабораторных работ «Электростатика-3»
+                                </td>
+                                <td>8</td>
+                                <td>
+                                    6 (05.10.2020-11.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. защита лабораторных работ «Электростатика-4»
+                                </td>
+                                <td>8</td>
+                                <td>
+                                    8 (19.10.2020-25.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    5. защита лабораторных работ «Магнетизм-1»
+                                </td>
+                                <td>8</td>
+                                <td>
+                                    10 (02.11.2020-08.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    6. защита лабораторных работ «Магнетизм-2»
+                                </td>
+                                <td>8</td>
+                                <td>
+                                    12 (16.11.2020-22.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    7. защита лабораторных работ «Электромагнитные колебания»
+                                </td>
+                                <td>8</td>
+                                <td>
+                                    15 (07.12.2020-13.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    8. контрольная работа № 1 «Электростатика»
+                                </td>
+                                <td>22</td>
+                                <td>
+                                    8 (19.10.2020-25.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    9. контрольная работа № 1 «Магнетизм»
+                                </td>
+                                <td>22</td>
+                                <td>
+                                    15 (07.12.2020-13.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+
+                        <tr>
+                            <td colspan="3">Балл текущего контроля: </td>
+                            <td>4,0</td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №1</td>
+                            <td>4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №2</td>
+                            <td>8</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №3</td>
+                            <td>12</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><em>Промежуточная аттестация (экзамен):</em></td>
+
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <strong>
+                                    Итоговая оценка:
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="my-2">
+            <strong>
+                Дисциплина "Элективные курсы по физической культуре и спорту" (ЗЕ - 2)
+
+
+            </strong>
+
+            <a href="#s_ss_6" role="button">Развернуть</a>
+        </div>
+        <div id="s_ss_6" class="collapse">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped table-bordered table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Название контрольного мероприятия</th>
+                            <th>Вес, %</th>
+                            <th>Срок проведения, № недели</th>
+                            <th>Оценка, дата получения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><em>Текущий контроль:</em></td>
+                        </tr>
+
+                            <tr>
+                                <td>
+                                    1. Текущий контроль успеваемости
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    4 (21.09.2020-27.09.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. Текущий контроль успеваемости
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    8 (19.10.2020-25.10.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. Текущий контроль успеваемости, контрольные нормативы по легкой атлетике
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    12 (16.11.2020-22.11.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. Текущий контроль успеваемости, контрольные нормативы  в учебных отделениях
+                                </td>
+                                <td>25</td>
+                                <td>
+                                    15 (07.12.2020-13.12.2020)
+                                </td>
+
+
+                                <td>
+
+
+
+                                </td>
+                            </tr>
+
+                        <tr>
+                            <td colspan="3">Балл текущего контроля: </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №1</td>
+                            <td>4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №2</td>
+                            <td>8</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">Контрольная неделя №3</td>
+                            <td>12</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"><em>Промежуточная аттестация (зачёт (без оценки)):</em></td>
+
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3">
+                                <strong>
+                                    Итоговая оценка:
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+<div class="mt-4">
+    <em>
+        При отсутствии изучаемой дисциплины или результатов освоения, необходимо обращаться к преподавателю или начальнику курса.
+        <br>
+        <strong>Тех. поддержка БАРС данный вопрос не курирует.</strong>
+    </em>
+</div>
+
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+
+
+
 </body>
-</html>

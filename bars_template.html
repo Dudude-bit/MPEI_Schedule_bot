@@ -6,7 +6,7 @@
     <style>
         body{
             box-sizing: border-box;
-            font-size: 15px;
+            font-size: 25px;
             display: flex;
             }
         .container{
@@ -14,8 +14,11 @@
             flex-grow: 1;
                     }
         .subject_name{
-            width: 270px;
+            width: 400px;
                     }
+        .row{
+            border: black solid 1px;
+        }
     </style>
 </head>
 <body>
@@ -25,7 +28,7 @@
                 Название предмета
             </div>
         </div>
-        {% for i in subjects_names_list %}
+        {% for i in subjects_list %}
             <div class="row">
                 <div class="subject_name">
                     {{i['name']}}
