@@ -116,42 +116,40 @@ def get_schedule_call(callback_query):
 def handling_bars(callback_query):
     user_id = callback_query.from_user.id
     if user_id in ALLOWED_BARS_USER_IDS:
-        # bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
-        # session_id = redis.get(f'session_id:{callback_query.from_user.id}')
-        # if not session_id:
-        #     bot.answer_callback_query(callback_query.id, 'Введите, пожалуйста, логин и пароль в формате ЛОГИН:ПАРОЛЬ', show_alert=True)
-        #     bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, change_password_and_username)
-        # else:
-        #     session_id = session_id.decode('utf8')
-        #     cookies_dict = {
-        #         'auth_bars': session_id
-        #     }
-        #     request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
-        #     text = request.text
-        #     if 'studentID' not in request.url:
-        #         login = redis.get(f'login:{callback_query.from_user.id}').decode('utf8')
-        #         password = redis.get(f'password:{callback_query.from_user.id}').decode('utf8')
-        #         session = requests.session()
-        #         session.post('https://bars.mpei.ru/bars_web/', data={
-        #             'UserName': login,
-        #             'Password': password
-        #         })
-        #         try:
-        #             session_id = session.cookies.get_dict()['auth_bars']
-        #             redis.set(f'session_id:{callback_query.from_user.id}', session_id)
-        #             cookies_dict = {
-        #                 'auth_bars': session_id
-        #             }
-        #             request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
-        #             text = request.text
-        #         except KeyError:
-        #             bot.answer_callback_query(callback_query.id, 'Такое ощущение, что у Вас поменялся пароль или логин на аккаунте, либо произошла другая непредвиденная ошибка.')
-        #             redis.delete(f'session_id:{callback_query.from_user.id}')
-        #             redis.delete(f'login:{callback_query.from_user.id}')
-        #             redis.delete(f'password:{callback_query.from_user.id}')
-        #             return
-            with open('ready_html.html') as f:
-                text = f.read()
+        bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
+        session_id = redis.get(f'session_id:{callback_query.from_user.id}')
+        if not session_id:
+            bot.answer_callback_query(callback_query.id, 'Введите, пожалуйста, логин и пароль в формате ЛОГИН:ПАРОЛЬ', show_alert=True)
+            bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, change_password_and_username)
+        else:
+            session_id = session_id.decode('utf8')
+            cookies_dict = {
+                'auth_bars': session_id
+            }
+            request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
+            text = request.text
+            if 'studentID' not in request.url:
+                login = redis.get(f'login:{callback_query.from_user.id}').decode('utf8')
+                password = redis.get(f'password:{callback_query.from_user.id}').decode('utf8')
+                session = requests.session()
+                session.post('https://bars.mpei.ru/bars_web/', data={
+                    'UserName': login,
+                    'Password': password
+                })
+                try:
+                    session_id = session.cookies.get_dict()['auth_bars']
+                    redis.set(f'session_id:{callback_query.from_user.id}', session_id)
+                    cookies_dict = {
+                        'auth_bars': session_id
+                    }
+                    request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
+                    text = request.text
+                except KeyError:
+                    bot.answer_callback_query(callback_query.id, 'Такое ощущение, что у Вас поменялся пароль или логин на аккаунте, либо произошла другая непредвиденная ошибка.')
+                    redis.delete(f'session_id:{callback_query.from_user.id}')
+                    redis.delete(f'login:{callback_query.from_user.id}')
+                    redis.delete(f'password:{callback_query.from_user.id}')
+                    return
             bs = BeautifulSoup(text, 'lxml')
             all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
             subjects_list = []
@@ -184,7 +182,7 @@ def handling_bars(callback_query):
             img = imgkit.from_string(templ.render(subjects_list=subjects_list, color_dict=color_dict), False)
             bot.send_photo(callback_query.message.chat.id, img)
     else:
-        bot.answer_callback_query(callback_query.id, 'Эта функция находится в разработке')
+        bot.answer_callback_query(callback_query.id, "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВКб ссылка есть в разделе 'О Боте'")
 
 
 
