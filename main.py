@@ -21,7 +21,7 @@ bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
 
-ALLOWED_BARS_USER_IDS = [449030562, 1171519808]
+ALLOWED_BARS_USER_IDS = [449030562, 1171519808, 824944307]
 
 @bot.message_handler(commands=['start'])
 @decorator
@@ -182,7 +182,7 @@ def handling_bars(callback_query):
             img = imgkit.from_string(templ.render(subjects_list=subjects_list, color_dict=color_dict), False)
             bot.send_photo(callback_query.message.chat.id, img)
     else:
-        bot.answer_callback_query(callback_query.id, "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВКб ссылка есть в разделе 'О Боте'", show_alert=True)
+        bot.answer_callback_query(callback_query.id, "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВК, ссылка есть в разделе 'О Боте'", show_alert=True)
 
 
 
