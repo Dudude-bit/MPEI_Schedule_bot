@@ -86,9 +86,12 @@ def get_schedule_in_chat(inline_query):
         return
     th = [weekday]
     try:
-        groupoid = parsing.get_groupoid_or_raise_exception(group)
+        groupoid = parsing.get_groupoid_or_raise_exception(group, redis)
     except exceptions.MpeiBotException:
         return
+    connection = db.create_connection()
+    try:
+        schedule = db.get_or_create_schedule(connection,weekday, re, )
     table = PrettyTable(th)
     result = telebot.types.InlineQueryResultArticle(inline_query.id, 'Расписание', input_message_content=telebot.types.InputTextMessageContent(str(table)))
     bot.answer_inline_query(inline_query.id, results=[result])
