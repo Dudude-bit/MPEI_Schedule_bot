@@ -92,6 +92,8 @@ def get_schedule_in_chat(inline_query):
     connection = db.create_connection()
     try:
         schedule = db.get_or_create_schedule(connection,weekday, re, )
+    except:
+      return
     table = PrettyTable(th)
     result = telebot.types.InlineQueryResultArticle(inline_query.id, 'Расписание', input_message_content=telebot.types.InputTextMessageContent(str(table)))
     bot.answer_inline_query(inline_query.id, results=[result])
