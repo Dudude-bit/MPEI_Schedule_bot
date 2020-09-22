@@ -21,7 +21,7 @@ bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
 
-ALLOWED_BARS_USER_IDS = [449030562, 1171519808, 824944307, 759835414]
+ALLOWED_BARS_USER_IDS = [449030562, 1171519808, 824944307, 759835414, 444020089]
 
 @bot.message_handler(commands=['start'])
 @decorator
