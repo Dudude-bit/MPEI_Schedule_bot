@@ -3,7 +3,7 @@ import redisdl
 import tempfile
 import yadisk as ya
 from time import gmtime, strftime
-OAUTH_KEY = 'AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY'
+OAUTH_KEY = os.getenv('OAUTH_TOKEN')
 yadisk = ya.YaDisk(token=OAUTH_KEY)
 
 with tempfile.NamedTemporaryFile() as f:
