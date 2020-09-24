@@ -306,7 +306,7 @@ def add_user_to_allowed_list(callback_query):
 
 def add_user(message):
     try:
-        user_id = message.text
+        user_id = int(message.text)
     except ValueError:
         bot.send_message(message.chat.id, 'Вы неправильно ввели user id')
     else:
