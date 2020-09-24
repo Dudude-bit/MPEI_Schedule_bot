@@ -11,7 +11,10 @@ protobuf==3.12.2
 psycopg2-binary==2.8.6
 pyTelegramBotAPI==3.7.2
 redis==3.5.3
+redis-dump-load==1.1
 requests==2.24.0
 six==1.15.0
 soupsieve==2.0.1
 urllib3==1.25.9
+webkit2png==0.8.2
+yadisk==1.2.14

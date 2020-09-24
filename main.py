@@ -2,37 +2,40 @@ import datetime
 import random
 import re
 
+import imgkit
 import redis
 import requests
 import telebot
 import os
 from jinja2 import Template
 from prettytable import PrettyTable
-import imgkit
 from telebot.apihelper import ApiException
 from bs4 import BeautifulSoup
 import db
 import exceptions
 import parsing
-from services import create_main_keyboard, decorator
+from services import create_main_keyboard, decorator, generate_subject_text, create_about_keyboard, \
+    delete_all_about_bars, saving_user_datas, get_about_text
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
 
-ALLOWED_BARS_USER_IDS = [449030562, 1171519808, 824944307, 759835414, 444020089]
+ALLOWED_BARS_USER_IDS = set(map(int, map(lambda x: x.decode('utf8'), redis.smembers('allowed_users_id'))))
+
 
 @bot.message_handler(commands=['start'])
 @decorator
 def handling_start(message):
+    user_id = message.from_user.id
     try:
         bot.delete_message(message.chat.id, message.message_id)
     except ApiException:
         pass
     bot.clear_step_handler_by_chat_id(message.chat.id)
     redis.sadd('unique_users', message.chat.id)
-    kb = create_main_keyboard()
+    kb = create_main_keyboard(user_id)
     user_group = redis.get(f'user_group:{message.from_user.id}')
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
@@ -49,24 +52,9 @@ def handling_start(message):
 @bot.callback_query_handler(func=lambda m: m.data == 'about')
 @bot.message_handler(commands=['about'])
 def about_handler(message):
-    kb = telebot.types.InlineKeyboardMarkup(row_width=1)
-    btn1 = telebot.types.InlineKeyboardButton(text='Telegram', url='https://t.me/Justnikcname')
-    btn2 = telebot.types.InlineKeyboardButton(text='Vk', url='https://vk.com/kirillinyakin')
-    btn3 = telebot.types.InlineKeyboardButton(text='GitHub', url='https://github.com/Dudude-bit/MPEI_Schedule_bot')
-    btn4 = telebot.types.InlineKeyboardButton(text='DonationAlerts', url='https://www.donationalerts.com/r/userelliot')
-    btn5 = telebot.types.InlineKeyboardButton(text='В главное меню', callback_data='back_to_main')
+    kb = create_about_keyboard()
     count_users = redis.scard('unique_users')
-    kb.add(btn1, btn2, btn3, btn4, btn5)
-    text = f"""
-    Привет, этим ботом пользуются {count_users} студентов! Если Вы хотите со мной связаться, то вот мои контакты:
-TG: https://t.me/Justnikcname
-VK: https://vk.com/kirillinyakin
-Если вдруг захотите посмотреть на мой код и улучшить его, так как я только начинаю хоть что то серьезное делать, то вот ссылка на GitHub:
-GitHub: https://github.com/Dudude-bit/MPEI_Schedule_bot
-Ну а если Вы вдруг захотите оплатить мой сервер, на котором держится этот бот(всего лишь 40 рублей в месяц XD), то вот ссылка на DonationAlerts:
-DonationAlerts: https://www.donationalerts.com/r/userelliot
-Спасибо за то, что пользуетесь моим ботом ))
-    """
+    text = get_about_text(count_users)
     if type(message) == telebot.types.Message:
         bot.send_message(message.chat.id, text, reply_markup=kb, disable_web_page_preview=True)
     else:
@@ -76,6 +64,7 @@ DonationAlerts: https://www.donationalerts.com/r/userelliot
                                   reply_markup=kb)
         except ApiException:
             pass
+
 
 @bot.inline_handler(func=lambda x: True)
 def get_schedule_in_chat(inline_query):
@@ -91,16 +80,14 @@ def get_schedule_in_chat(inline_query):
         return
     connection = db.create_connection()
     try:
-        schedule = db.get_or_create_schedule(connection,weekday, re, )
+        schedule = db.get_or_create_schedule(connection, weekday, re, )
     except:
-      return
+        return
     table = PrettyTable(th)
-    result = telebot.types.InlineQueryResultArticle(inline_query.id, 'Расписание', input_message_content=telebot.types.InputTextMessageContent(str(table)))
+    result = telebot.types.InlineQueryResultArticle(inline_query.id, 'Расписание',
+                                                    input_message_content=telebot.types.InputTextMessageContent(
+                                                        str(table)))
     bot.answer_inline_query(inline_query.id, results=[result])
-
-
-
-
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'call_schedule')
@@ -124,7 +111,8 @@ def handling_bars(callback_query):
         bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
         session_id = redis.get(f'session_id:{callback_query.from_user.id}')
         if not session_id:
-            bot.answer_callback_query(callback_query.id, 'Введите, пожалуйста, логин и пароль в формате ЛОГИН:ПАРОЛЬ', show_alert=True)
+            bot.answer_callback_query(callback_query.id, 'Введите, пожалуйста, логин и пароль в формате ЛОГИН:ПАРОЛЬ',
+                                      show_alert=True)
             bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, change_password_and_username)
         else:
             session_id = session_id.decode('utf8')
@@ -150,10 +138,9 @@ def handling_bars(callback_query):
                     request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
                     text = request.text
                 except KeyError:
-                    bot.answer_callback_query(callback_query.id, 'Такое ощущение, что у Вас поменялся пароль или логин на аккаунте, либо произошла другая непредвиденная ошибка.')
-                    redis.delete(f'session_id:{callback_query.from_user.id}')
-                    redis.delete(f'login:{callback_query.from_user.id}')
-                    redis.delete(f'password:{callback_query.from_user.id}')
+                    bot.answer_callback_query(callback_query.id,
+                                              'Такое ощущение, что у Вас поменялся пароль или логин на аккаунте, либо произошла другая непредвиденная ошибка.')
+                    delete_all_about_bars(callback_query, redis)
                     return
             bs = BeautifulSoup(text, 'lxml')
             all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
@@ -187,16 +174,17 @@ def handling_bars(callback_query):
             img = imgkit.from_string(templ.render(subjects_list=subjects_list, color_dict=color_dict), False)
             bot.send_photo(callback_query.message.chat.id, img)
     else:
-        bot.answer_callback_query(callback_query.id, "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВК, ссылка есть в разделе 'О Боте'", show_alert=True)
-
-
+        bot.answer_callback_query(callback_query.id,
+                                  "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВК, ссылка есть в разделе 'О Боте'",
+                                  show_alert=True)
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')
 @decorator
 def handling_back_to_main(callback_query):
+    user_id = callback_query.from_user.id
     bot.clear_step_handler_by_chat_id(callback_query.message.chat.id)
-    kb = create_main_keyboard()
+    kb = create_main_keyboard(user_id)
     user_group = redis.get(f'user_group:{callback_query.from_user.id}')
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
@@ -294,24 +282,7 @@ def get_more_information(callback_query: telebot.types.CallbackQuery):
                                   text='Хмм... Вы пытаетесь получить старое расписание. Нажмите, пожалуйста, назад и выберите заново день недели',
                                   show_alert=True)
         return
-    time_subj_num = {
-        1: '09:20 - 10:55',
-        2: '11:10 - 12:45',
-        3: '13:45 - 15:20',
-        4: '15:35 - 17:10',
-        5: '17:20 - 18:50',
-        6: '18:55 - 20:25',
-        7: '20:30 - 22:00'
-    }
-    text = f"""
-    День недели:{information.weekday}
-Номер пары:{information.num_object}
-Название предмета:{information.object}
-Тип пары:{information.object_type}
-Преподаватель:{information.teacher}
-Кабинет:{information.auditory}
-Время пары: {time_subj_num[information.num_object]}
-    """
+    text = generate_subject_text(information)
     try:
         bot.edit_message_text(text, callback_query.message.chat.id, callback_query.message.message_id,
                               reply_markup=kb)
@@ -326,14 +297,32 @@ def change_group(callback_query):
     bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, get_new_group)
 
 
+@bot.callback_query_handler(func=lambda m: m.data == 'add_user')
+@decorator
+def add_user_to_allowed_list(callback_query):
+    bot.answer_callback_query(callback_query.id, text='Введите id пользователя', show_alert=True)
+    bot.register_next_step_handler_by_chat_id(callback_query.message.chat.id, add_user)
+
+
+def add_user(message):
+    try:
+        user_id = message.text
+    except ValueError:
+        bot.send_message(message.chat.id, 'Вы неправильно ввели user id')
+    else:
+        redis.sadd('allowed_users_id', user_id)
+        ALLOWED_BARS_USER_IDS.add(user_id)
+
+
 @decorator
 def get_new_group(message: telebot.types.Message):
     group = message.text
+    user_id = message.from_user.id
     if group:
         group = group.upper()
     else:
         return
-    kb = create_main_keyboard()
+    kb = create_main_keyboard(user_id)
     emoji_list = list('😀😃😄😊🙃👽🤖🤪😝')
     emoji = random.choice(emoji_list)
     try:
@@ -376,13 +365,10 @@ def change_password_and_username(message):
             bot.send_message(message.chat.id, 'Хмм... Походу Вы ввели неправильно логин или пароль')
             handling_start(message)
         else:
-            redis.set(f'session_id:{message.from_user.id}', session_id)
-            redis.set(f'login:{message.from_user.id}', login)
-            redis.set(f'password:{message.from_user.id}', password)
+            bot.send_message(message.chat.id,
+                             'Вы правильно ввели логин и пароль, теперь Вы можете посмотреть свой БАРС')
+            saving_user_datas(message, redis, login, password, session_id)
             handling_start(message)
-
-
-
 
 
 if __name__ == '__main__':
