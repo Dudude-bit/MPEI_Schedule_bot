@@ -17,7 +17,7 @@ import parsing
 from services import create_main_keyboard, decorator, generate_subject_text, create_about_keyboard, \
     delete_all_about_bars, saving_user_datas, get_about_text
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = '1090473692:AAFfHjX90PBhLkR5OWOVwnbMKiAtt1qXShc'
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -171,7 +171,8 @@ def handling_bars(callback_query):
                 '0': 'red',
                 '': 'grey'
             }
-            img = imgkit.from_string(templ.render(subjects_list=subjects_list, color_dict=color_dict), False)
+            html_text = templ.render(subjects_list=subjects_list, color_dict=color_dict)
+            img = imgkit.from_string(html_text, False)
             bot.send_photo(callback_query.message.chat.id, img)
     else:
         bot.answer_callback_query(callback_query.id,
