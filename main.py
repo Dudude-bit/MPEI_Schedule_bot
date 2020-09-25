@@ -15,7 +15,7 @@ import db
 import exceptions
 import parsing
 from services import create_main_keyboard, decorator, generate_subject_text, create_about_keyboard, \
-    delete_all_about_bars, saving_user_datas, get_about_text
+    delete_all_about_bars, saving_user_datas, get_about_text, parsing_marks
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
@@ -146,19 +146,7 @@ def handling_bars(callback_query):
             all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
             subjects_list = []
             for item in all_subjects:
-                name_subject = item.find('strong').text.replace('Дисциплина', '').replace('\"', '').strip()
-                table = item.find_next_sibling()
-                regex = '\d{1,2}. [а-яА-я]+'
-                all_tds_with_km = table.find_all('td', text=re.compile(regex))
-                text_all_tds_with_km = [i.text.strip() for i in all_tds_with_km]
-                km_num = len(text_all_tds_with_km)
-                subjects_list.append({})
-                subjects_list[-1]['name'] = name_subject
-                subjects_list[-1]['km_num'] = km_num
-                subjects_list[-1]['marks'] = []
-                for i in range(km_num):
-                    mark = all_tds_with_km[i].find_next_siblings()[-1].text.strip().split()
-                    subjects_list[-1]['marks'].append(mark[0] if len(mark) > 0 else '')
+                parsing_marks(item, subjects_list)
 
             with open('bars_template.html') as f:
                 templ = Template(f.read())
@@ -178,6 +166,7 @@ def handling_bars(callback_query):
         bot.answer_callback_query(callback_query.id,
                                   "Эта функция доступна ограниченному числу лиц. Если Вы хотите получить доступ, то напишити мне в ВК, ссылка есть в разделе 'О Боте'",
                                   show_alert=True)
+
 
 
 @bot.callback_query_handler(func=lambda m: m.data == 'back_to_main')

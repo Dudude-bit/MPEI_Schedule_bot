@@ -90,3 +90,18 @@ GitHub: https://github.com/Dudude-bit/MPEI_Schedule_bot
 DonationAlerts: https://www.donationalerts.com/r/userelliot
 Спасибо за то, что пользуетесь моим ботом ))
     """
+
+def parsing_marks(item, subjects_list):
+    name_subject = item.find('strong').text.replace('Дисциплина', '').replace('\"', '').strip()
+    table = item.find_next_sibling()
+    regex = '\d{1,2}. [а-яА-я]+'
+    all_tds_with_km = table.find_all('td', text=re.compile(regex))
+    text_all_tds_with_km = [i.text.strip() for i in all_tds_with_km]
+    km_num = len(text_all_tds_with_km)
+    subjects_list.append({})
+    subjects_list[-1]['name'] = name_subject
+    subjects_list[-1]['km_num'] = km_num
+    subjects_list[-1]['marks'] = []
+    for i in range(km_num):
+        mark = all_tds_with_km[i].find_next_siblings()[-1].text.strip().split()
+        subjects_list[-1]['marks'].append(mark[0] if len(mark) > 0 else '')
