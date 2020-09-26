@@ -17,7 +17,7 @@ import parsing
 from services import create_main_keyboard, decorator, generate_subject_text, create_about_keyboard, \
     delete_all_about_bars, saving_user_datas, get_about_text, parsing_marks
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = '1090473692:AAFfHjX90PBhLkR5OWOVwnbMKiAtt1qXShc'
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -119,9 +119,8 @@ def handling_bars(callback_query):
             cookies_dict = {
                 'auth_bars': session_id
             }
-            request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
-            text = request.text
-            if 'studentID' not in request.url:
+            request = requests.get('https://bars.mpei.ru/bars_web/Student/ListStudent', cookies=cookies_dict)
+            if 'ListStudent' not in request.url:
                 login = redis.get(f'login:{callback_query.from_user.id}').decode('utf8')
                 password = redis.get(f'password:{callback_query.from_user.id}').decode('utf8')
                 session = requests.session()
@@ -135,13 +134,19 @@ def handling_bars(callback_query):
                     cookies_dict = {
                         'auth_bars': session_id
                     }
-                    request = requests.get('https://bars.mpei.ru/bars_web/', cookies=cookies_dict)
                     text = request.text
+                    a = BeautifulSoup(text, 'lxml').find('tbody').find('tr').find('a').get('href')
+                    text = requests.get(f'https://bars.mpei.ru{a}', cookies=cookies_dict).text
                 except KeyError:
                     bot.answer_callback_query(callback_query.id,
                                               'Такое ощущение, что у Вас поменялся пароль или логин на аккаунте, либо произошла другая непредвиденная ошибка.')
                     delete_all_about_bars(callback_query, redis)
                     return
+            else:
+                text = request.text
+                a = BeautifulSoup(text, 'lxml').find('tbody').find('tr').find('a').get('href')
+                print(a)
+                text = requests.get(f'https://bars.mpei.ru{a}', cookies=cookies_dict).text
             bs = BeautifulSoup(text, 'lxml')
             all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
             subjects_list = []
