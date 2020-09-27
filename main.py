@@ -17,7 +17,7 @@ import parsing
 from services import create_main_keyboard, decorator, generate_subject_text, create_about_keyboard, \
     delete_all_about_bars, saving_user_datas, get_about_text, parsing_marks
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = '1090473692:AAFfHjX90PBhLkR5OWOVwnbMKiAtt1qXShc'
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
 redis = redis.Redis()
@@ -120,7 +120,7 @@ def handling_bars(callback_query):
                 'auth_bars': session_id
             }
             request = requests.get('https://bars.mpei.ru/bars_web/Student/ListStudent', cookies=cookies_dict)
-            if 'ListStudent' not in request.url:
+            if 'ReturnURL' in request.text:
                 login = redis.get(f'login:{callback_query.from_user.id}').decode('utf8')
                 password = redis.get(f'password:{callback_query.from_user.id}').decode('utf8')
                 session = requests.session()
