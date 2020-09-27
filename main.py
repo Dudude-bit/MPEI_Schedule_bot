@@ -134,7 +134,7 @@ def handling_bars(callback_query):
                     cookies_dict = {
                         'auth_bars': session_id
                     }
-                    text = request.text
+                    text = session.get('https://bars.mpei.ru/bars_web/Student/ListStudent').text
                     a = BeautifulSoup(text, 'lxml').find('tbody').find('tr').find('a').get('href')
                     text = requests.get(f'https://bars.mpei.ru{a}', cookies=cookies_dict).text
                 except KeyError:
@@ -145,7 +145,6 @@ def handling_bars(callback_query):
             else:
                 text = request.text
                 a = BeautifulSoup(text, 'lxml').find('tbody').find('tr').find('a').get('href')
-                print(a)
                 text = requests.get(f'https://bars.mpei.ru{a}', cookies=cookies_dict).text
             bs = BeautifulSoup(text, 'lxml')
             all_subjects = bs.find('div', id='div-Student_SemesterSheet').find_all('div', class_='my-2')
