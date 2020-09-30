@@ -14,7 +14,11 @@ services:
   db_redis:
     image: redis:6.0.8
     restart: always
+    volumes:
+    - ./:/data
     ports:
     - 6379:6379
   app:
     image: dudude/mpei_bot_ubuntu
+    environment:
+      TOKEN: 1190382600:AAGYuaGx6vgZgBSKXymZ0grwg8v2f8fb-iE
