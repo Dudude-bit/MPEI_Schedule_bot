@@ -1,26 +1,27 @@
 import os
 import redisdl
-import tempfile
 import yadisk as ya
 from time import gmtime, strftime
 OAUTH_KEY = os.getenv('OAUTH_TOKEN')
-yadisk = ya.YaDisk(token=OAUTH_KEY)
+yadisk = ya.YaDisk(token='AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY')
 
-with tempfile.NamedTemporaryFile() as f:
-    redisdl.dump(f)
-    time = strftime('%Y_%m_%d_%H', gmtime())
-    year, month, day, hour = time.split('_')
-    try:
-        yadisk.mkdir(f'/{year}')
-    except ya.exceptions.DirectoryExistsError:
-        pass
-    try:
-        yadisk.mkdir(f'/{year}/{month}')
-    except ya.exceptions.DirectoryExistsError:
-        pass
-    try:
-        yadisk.mkdir(f'/{year}/{month}/{day}')
-    except ya.exceptions.DirectoryExistsError:
-        pass
-    yadisk.upload(f.name, f'/{year}/{month}/{day}/{hour}.json', overwrite=True)
-
+f = open('temp.json', 'w', encoding='utf8')
+json_string = redisdl.dump(f)
+_time = strftime('%Y_%m_%d_%H', gmtime())
+year, month, day, hour = _time.split('_')
+try:
+    yadisk.mkdir(f'/{year}')
+except ya.exceptions.DirectoryExistsError:
+    pass
+try:
+    yadisk.mkdir(f'/{year}/{month}')
+except ya.exceptions.DirectoryExistsError:
+    pass
+try:
+    yadisk.mkdir(f'/{year}/{month}/{day}')
+except ya.exceptions.DirectoryExistsError:
+    pass
+f.close()
+yadisk.upload('temp.json', f'/{year}/{month}/{day}/{hour}.json', overwrite=True)
+f = open('temp.json', 'w')
+f.close()
