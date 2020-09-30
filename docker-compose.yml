@@ -1,0 +1,20 @@
+version: '1'
+services:
+  db_postgres:
+    image: postgres:11.4-alpine
+    container_name: postgres_main
+    ports:
+    - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: Mersedes55
+      POSTGRES_USER: mpei_bot_user
+      POSTGRES_DB: mpei_bot
+      PG_DATA: /var/lib/postgresql/data/pgdata
+  db_redis:
+    image: redis:6.0.8
+    restart: always
+    ports:
+    - 6379:6379
+  app:
+    image: dudude/mpei_bot_ubuntu
