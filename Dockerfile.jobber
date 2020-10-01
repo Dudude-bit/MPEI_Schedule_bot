@@ -9,8 +9,9 @@ EXPOSE 5432
 RUN apk add python3-dev
 
 COPY ./.jobber /home/jobberuser
-COPY ./delete_schedule.py /main
-COPY ./saving_redis_dump.py /main
+COPY ./delete_schedule.py /main/delete_schedule.py
+COPY ./saving_redis_dump.py /main/delete_schedule.py
+COPY ./temp.json /main/temp.json
 
 RUN apk add py-pip
 

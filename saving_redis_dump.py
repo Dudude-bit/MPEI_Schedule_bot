@@ -3,7 +3,7 @@ import redisdl
 import yadisk as ya
 from time import gmtime, strftime
 OAUTH_KEY = os.getenv('OAUTH_TOKEN')
-yadisk = ya.YaDisk(token='AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY')
+yadisk = ya.YaDisk(token=os.getenv('OAUTH_TOKEN'))
 
 f = open('temp.json', 'w', encoding='utf8')
 json_string = redisdl.dump(f)

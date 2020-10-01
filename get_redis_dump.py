@@ -3,7 +3,7 @@ import yadisk as ya
 import redis
 yadisk = ya.YaDisk(token='AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY')
 
-r = redis.Redis()
+r = redis.Redis(host='redis')
 path = list(yadisk.get_last_uploaded())[0].path
 
 yadisk.download(path, 'temp.json')

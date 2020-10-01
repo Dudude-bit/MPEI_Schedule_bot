@@ -1,13 +1,19 @@
 version: '1'
 services:
   redis_dump:
+    networks:
+      - main
     image:
       dudude/get_redis_dump
-    links:
-      - db_redis
+    depends_on:
+      - redis
+    ports:
+    - 6379:6379
     environment:
       OAUTH_TOKEN: AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY
   db_postgres:
+    networks:
+      - main
     image: postgres:11.4-alpine
     container_name: postgres_main
     restart: always
@@ -16,13 +22,29 @@ services:
       POSTGRES_USER: mpei_bot_user
       POSTGRES_DB: mpei_bot
       PG_DATA: /var/lib/postgresql/data/pgdata
-  db_redis:
-    image: redis
+  redis:
+    networks:
+      - main
+    image: dudude/redis
     restart: always
   app:
+    networks:
+      - main
     image: dudude/mpei_bot_ubuntu
     environment:
-      TOKEN: 1190382600:AAGYuaGx6vgZgBSKXymZ0grwg8v2f8fb-iE
+      TOKEN: 1190382600:AAGITzZDFTn1HeQmUUUyciyIQkaCseYUGwI
+    restart: always
   redis_save_yandex_disk:
+    environment:
+      OAUTH_TOKEN: AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY
+    ports:
+    - 5432:5432
+    - 6379:6379
+    networks:
+      - main
     image: dudude/jobber
     restart: no
+
+networks:
+  main:
+    driver: bridge
