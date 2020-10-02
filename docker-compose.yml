@@ -1,49 +1,51 @@
-version: '1'
+version: "3.0"
 services:
   redis_dump:
     networks:
       - main
     image:
-      dudude/get_redis_dump
+      dudude/redis_get_dump
     depends_on:
       - redis
-    ports:
-    - 6379:6379
     environment:
-      OAUTH_TOKEN: AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY
+      OAUTH_TOKEN: "AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY"
   db_postgres:
     networks:
       - main
     image: postgres:11.4-alpine
     container_name: postgres_main
-    restart: always
+    restart: "always"
     environment:
-      POSTGRES_PASSWORD: Mersedes55
-      POSTGRES_USER: mpei_bot_user
-      POSTGRES_DB: mpei_bot
+      POSTGRES_PASSWORD: "Mersedes55"
+      POSTGRES_USER: "mpei_bot_user"
+      POSTGRES_DB: "mpei_bot"
       PG_DATA: /var/lib/postgresql/data/pgdata
   redis:
     networks:
       - main
     image: dudude/redis
-    restart: always
+    restart: "always"
   app:
+    depends_on:
+      - redis
+      - redis_dump
+      - redis_save_yandex_disk
+      - db_postgres
     networks:
       - main
     image: dudude/mpei_bot_ubuntu
     environment:
-      TOKEN: 1190382600:AAGITzZDFTn1HeQmUUUyciyIQkaCseYUGwI
-    restart: always
+      TOKEN: "1190382600:AAGITzZDFTn1HeQmUUUyciyIQkaCseYUGwI"
+    restart: "always"
   redis_save_yandex_disk:
+    depends_on:
+      - redis
     environment:
-      OAUTH_TOKEN: AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY
-    ports:
-    - 5432:5432
-    - 6379:6379
+      OAUTH_TOKEN: "AgAAAAA50RCLAAadkzzPvN2mYkRkiYmUUQeEssY"
     networks:
       - main
     image: dudude/jobber
-    restart: no
+    restart: "no"
 
 networks:
   main:

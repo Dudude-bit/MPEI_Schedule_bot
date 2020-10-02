@@ -20,7 +20,7 @@ from services import create_main_keyboard, decorator, generate_subject_text, cre
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
 
-redis = redis.Redis()
+redis = redis.Redis(host='redis')
 
 ALLOWED_BARS_USER_IDS = set(map(int, map(lambda x: x.decode('utf8'), redis.smembers('allowed_users_id'))))
 
