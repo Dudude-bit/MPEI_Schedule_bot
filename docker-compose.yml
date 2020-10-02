@@ -35,9 +35,7 @@ services:
       - db_postgres
     networks:
       - main
-    build:
-      context: ./
-      dockerfile: Dockerfile.ubuntu
+    image: dudude/mpei_bot_ubuntu
     environment:
       TOKEN: "1190382600:AAGITzZDFTn1HeQmUUUyciyIQkaCseYUGwI"
     restart: "always"

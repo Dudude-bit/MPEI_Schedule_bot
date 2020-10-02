@@ -1,7 +1,7 @@
 import datetime
 import random
 import re
-
+import time
 import imgkit
 import redis
 import requests
@@ -16,6 +16,8 @@ import exceptions
 import parsing
 from services import create_main_keyboard, decorator, generate_subject_text, create_about_keyboard, \
     delete_all_about_bars, saving_user_datas, get_about_text, parsing_marks
+
+time.sleep(10)
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(token=TOKEN, skip_pending=True)
