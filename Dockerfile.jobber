@@ -2,10 +2,6 @@ FROM jobber
 
 USER root
 
-EXPOSE 6379
-
-EXPOSE 5432
-
 RUN apk add python3-dev
 
 COPY ./.jobber /home/jobberuser

@@ -1,7 +1,5 @@
 FROM alpine
 
-EXPOSE 6379
-
 RUN apk add python3-dev
 
 COPY ./get_redis_dump.py /get_redis_dump.py
