@@ -1,4 +1,4 @@
-CREATE DATABASE mpei_bot;
+use mpei_bot;
 CREATE TABLE schedule (
   id serial unique,
   WeekDay VARCHAR(250) NOT NULL,
