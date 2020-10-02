@@ -25,6 +25,8 @@ services:
       - main
     image: dudude/redis
     restart: "always"
+    ports:
+    - 6379:6379
   app:
     depends_on:
       - redis
@@ -33,7 +35,9 @@ services:
       - db_postgres
     networks:
       - main
-    image: dudude/mpei_bot_ubuntu
+    build:
+      context: ./
+      dockerfile: Dockerfile.ubuntu
     environment:
       TOKEN: "1190382600:AAGITzZDFTn1HeQmUUUyciyIQkaCseYUGwI"
     restart: "always"

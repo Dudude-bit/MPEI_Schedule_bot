@@ -24,6 +24,9 @@ redis = redis.Redis(host='redis')
 
 ALLOWED_BARS_USER_IDS = set(map(int, map(lambda x: x.decode('utf8'), redis.smembers('allowed_users_id'))))
 
+print(ALLOWED_BARS_USER_IDS)
+
+print('here')
 
 @bot.message_handler(commands=['start'])
 @decorator
