@@ -10,5 +10,5 @@ RUN pip3 install yadisk
 
 RUN pip3 install redis
 
-CMD sh
+CMD python3 get_redis_dump.py
 
