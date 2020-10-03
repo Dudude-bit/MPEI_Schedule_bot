@@ -1,19 +1,33 @@
-FROM jobber
+FROM alpine:3.11
 
-USER root
-
+# make user
+ENV USERID 1000
+RUN apk update
 RUN apk add python3-dev
-
+RUN apk add py-pip
+RUN apk add sudo
+RUN addgroup jobberuser && \
+    adduser -S -u "${USERID}" -G jobberuser jobberuser && \
+    mkdir -p "/var/jobber/${USERID}" && \
+    chown -R jobberuser:jobberuser "/var/jobber/${USERID}"
+# install jobber
+ENV JOBBER_VERSION 1.4.4
+ENV JOBBER_SHA256 ec09b2efafff69c91fba2124bf28607209e1c9b50ed834ff444a9d40798aa8d3
+RUN wget -O /tmp/jobber.apk "https://github.com/dshearer/jobber/releases/download/v${JOBBER_VERSION}/jobber-${JOBBER_VERSION}-r0.apk" && \
+    echo -n "Actual checksum: " && sha256sum /tmp/jobber.apk && \
+    echo "${JOBBER_SHA256} */tmp/jobber.apk" | sha256sum -c && \
+# --no-scripts is needed b/c the post-install scripts don't work in Docker
+    apk add --no-network --no-scripts --allow-untrusted /tmp/jobber.apk && \
+    rm /tmp/jobber.apk
+RUN pip3 install yadisk==1.2.14
+RUN pip3 install redis-dump-load
 COPY ./.jobber /home/jobberuser
 COPY ./delete_schedule.py /main/delete_schedule.py
-COPY ./saving_redis_dump.py /main/delete_schedule.py
+COPY ./saving_redis_dump.py /main/saving_redis_dump.py
 COPY ./temp.json /main/temp.json
-
-RUN apk add py-pip
-
-RUN pip3 install yadisk==1.2.14
-
-
-RUN chmod a-rwx /home/jobberuser/.jobber
-RUN chmod a+r /home/jobberuser/.jobber
+# add jobfile
+COPY --chown=jobberuser:jobberuser .jobber /home/jobberuser/.jobber
+RUN chmod 0600 /home/jobberuser/.jobber
+RUN chmod a+rwx /main/temp.json
 USER jobberuser
+CMD ["/usr/libexec/jobberrunner", "-u", "/var/jobber/1000/cmd.sock", "/home/jobberuser/.jobber"]

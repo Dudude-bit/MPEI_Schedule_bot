@@ -8,7 +8,11 @@ path = list(yadisk.get_last_uploaded())[0].path
 
 yadisk.download(path, 'temp.json')
 
-str_json = open('temp.json').read()
+file = open('temp.json')
+str_json = file.read()
+file.close()
+file = open('temp.json', 'w')
+file.close()
 json = json.loads(str_json)
 for key in json:
     if json[key]['type'] == 'string':
