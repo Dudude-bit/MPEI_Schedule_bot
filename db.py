@@ -9,7 +9,7 @@ import parsing
 
 
 def create_connection():
-    return psycopg2.connect(dbname='mpei_bot', user='mpei_bot_user', password=os.getenv('passwd'), host='db_postgres')
+    return psycopg2.connect(user='postgres', dbname='mpei_bot',password=os.getenv('passwd'), host='db_postgres')
 
 
 def get_or_create_schedule(connection, weekday, redis_obj: redis.Redis,

@@ -1,2 +1,4 @@
-while True:
-    pass
+from db import create_connection
+
+
+create_connection()

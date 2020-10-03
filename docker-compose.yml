@@ -12,12 +12,11 @@ services:
   db_postgres:
     networks:
       - main
-    image: postgres:11.4-alpine
+    image: dudude/postgres
     container_name: postgres_main
     restart: "always"
     environment:
       POSTGRES_PASSWORD: "Mersedes55"
-      POSTGRES_USER: "mpei_bot_user"
       POSTGRES_DB: "mpei_bot"
       PG_DATA: /var/lib/postgresql/data/pgdata
   redis:
@@ -28,6 +27,7 @@ services:
     ports:
     - 6379:6379
   app:
+    user: root
     depends_on:
       - redis
       - redis_dump
@@ -38,6 +38,7 @@ services:
     image: dudude/mpei_bot_ubuntu
     environment:
       TOKEN: "1190382600:AAGITzZDFTn1HeQmUUUyciyIQkaCseYUGwI"
+      XDG_RUNTIME_DIR: "/tmp"
     restart: "always"
   redis_save_yandex_disk:
     depends_on:
