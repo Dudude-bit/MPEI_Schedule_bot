@@ -1,16 +1,17 @@
-FROM alpine
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND noninteractive
+
 
 WORKDIR /home/mpei_bot
 
 COPY ./ ./
 
-RUN apk update
-RUN apk add git
-RUN apk add postgresql-dev gcc python3-dev musl-dev
-RUN apk add py-pip
-RUN apk add libxml2-dev=2.9.10-r5
-RUN apk add libxslt-dev=1.1.34-r0
-RUN apk add wkhtmltopdf
+RUN apt update -y
+RUN apt install -y git
+RUN apt install -y postgresql gcc python3-dev musl-dev
+RUN apt install -y python3-pip
+RUN apt install -y wkhtmltopdf
 RUN pip3 install -r /home/mpei_bot/requirements.txt
 
 RUN chmod 7700 /tmp

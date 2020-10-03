@@ -13,5 +13,7 @@ RUN apk add py-pip
 
 RUN pip3 install yadisk==1.2.14
 
+
 RUN chmod a-rwx /home/jobberuser/.jobber
 RUN chmod a+r /home/jobberuser/.jobber
+USER jobberuser
