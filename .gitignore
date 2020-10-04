@@ -3,3 +3,4 @@ __pycache__/
 q.html
 venv/
 log.log
+docker-compose_dir/

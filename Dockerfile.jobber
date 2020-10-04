@@ -2,7 +2,7 @@ FROM blacklabelops/jobber:v1.2
 RUN mkdir /main
 RUN apk update
 RUN apk add python3-dev
-RUN apk add py-pip
+RUN apk add py-pip postgresql-dev gcc musl-dev
 RUN pip3 install yadisk==1.2.14
 RUN pip3 install redis-dump-load
 RUN pip3 install redis
