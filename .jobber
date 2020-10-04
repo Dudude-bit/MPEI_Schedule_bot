@@ -2,10 +2,10 @@ version: 1.4
 
 jobs:
   redis_backup:
-    cmd: sudo python3 /main/saving_redis_dump.py
+    cmd: python3 /main/saving_redis_dump.py
     time: 0 0 * * * *
     onError: Continue
   weekly_delete_schedule:
-    cmd: sudo python3 /main/delete_schedule.py
+    cmd: python3 /main/delete_schedule.py
     time: 0 0 0 * * 1
     onError: Continue
