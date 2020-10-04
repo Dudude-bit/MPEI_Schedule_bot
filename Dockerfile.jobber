@@ -8,7 +8,7 @@ RUN pip3 install redis-dump-load
 RUN pip3 install redis
 RUN pip3 install requests
 RUN pip3 install beautifulsoup4
-RUN pip3 install psycopg2
+RUN pip3 install psycopg2-binary
 COPY ./delete_schedule.py /main/delete_schedule.py
 COPY ./saving_redis_dump.py /main/saving_redis_dump.py
 
