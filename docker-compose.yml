@@ -39,6 +39,7 @@ services:
     environment:
       TOKEN: "1190382600:AAGITzZDFTn1HeQmUUUyciyIQkaCseYUGwI"
       XDG_RUNTIME_DIR: "/tmp"
+      passwd: "Mersedes55"
     restart: "always"
   redis_save_yandex_disk:
     depends_on:

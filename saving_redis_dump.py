@@ -5,7 +5,7 @@ from time import gmtime, strftime
 OAUTH_KEY = os.getenv('OAUTH_TOKEN')
 yadisk = ya.YaDisk(token=os.getenv('OAUTH_TOKEN'))
 f = open('temp.json', 'w', encoding='utf8')
-json_string = redisdl.dump(f)
+json_string = redisdl.dump(f, 'redis')
 _time = strftime('%Y_%m_%d_%H', gmtime())
 year, month, day, hour = _time.split('_')
 try:

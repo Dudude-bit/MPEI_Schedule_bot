@@ -1,7 +1,10 @@
+import psycopg2
 import redis
 import requests
 from bs4 import BeautifulSoup
-from db import create_connection
+
+def create_connection():
+    return psycopg2.connect(user='postgres', dbname='mpei_bot',password=os.getenv('passwd'), host='db_postgres')
 
 redis_obj = redis.Redis()
 

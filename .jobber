@@ -8,4 +8,4 @@ jobs:
   weekly_delete_schedule:
     cmd: python3 /main/delete_schedule.py
     time: 0 0 0 * * 1
-    onError: Continue
+    onError:
