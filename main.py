@@ -327,11 +327,12 @@ def get_new_group(message: telebot.types.Message):
         groupoid = parsing.get_groupoid_or_raise_exception(group, redis)
     except exceptions.MpeiBotException as e:
         user_group = redis.get(f'user_group:{message.from_user.id}')
+        current_week = redis.get('current_week').decode('utf8')
         if user_group:
             user_group = user_group.decode('utf8')
-            continue_text = f'студент {user_group} {emoji}'
+            continue_text = f'студент {user_group} {emoji}. Сегодня идет {current_week} неделя'
         else:
-            continue_text = f'МЭИшник {emoji}'
+            continue_text = f'МЭИшник {emoji}. Сегодня идет {current_week} неделя'
         bot.send_message(message.chat.id, text=e.message)
         bot.send_message(message.chat.id, text=f'Привет, {continue_text}', reply_markup=kb)
         return
