@@ -1,3 +1,5 @@
+import os
+
 import psycopg2
 import redis
 import requests
