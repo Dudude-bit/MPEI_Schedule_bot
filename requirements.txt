@@ -4,7 +4,7 @@ chardet==3.0.4
 idna==2.10
 imgkit==1.0.2
 Jinja2==2.11.2
-lxml==4.5.2
+lxml==4.6.5
 MarkupSafe==1.1.1
 prettytable==0.7.2
 protobuf==3.12.2
